@@ -6,7 +6,7 @@ using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Cors;
 using BookingSystem.Models.Test;
-using BookingSystem.Data.Test;
+using BookingSystem.DAO.Test;
 
 namespace BookingSystem.Controllers.Test
 {
