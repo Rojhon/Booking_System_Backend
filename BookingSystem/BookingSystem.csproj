@@ -122,13 +122,10 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\Offices\OfficeModel.cs" />
-    <Compile Include="Models\Requests\RequestHistoryModel.cs" />
     <Compile Include="Models\Requests\RequestModel.cs" />
     <Compile Include="Models\Requests\RequestStatusModel.cs" />
-    <Compile Include="Models\Requests\TrackingStatusModel.cs" />
     <Compile Include="Models\Services\ServiceModel.cs" />
     <Compile Include="Models\Test\TestModel.cs" />
-    <Compile Include="Models\Users\PositionModel.cs" />
     <Compile Include="Models\Users\UserModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
