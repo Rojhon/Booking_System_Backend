@@ -10,7 +10,7 @@ namespace BookingSystem.Models.Requests
         public int Id { get; set; }
         public int TrackingId { get; set; }
         public int OfficeId { get; set; }
-        public int ServiceID { get; set; }
+        public int ServiceId { get; set; }
         public int StatusId { get; set; }
         public string UserNote { get; set; }
         public string OfficeNote { get; set; }

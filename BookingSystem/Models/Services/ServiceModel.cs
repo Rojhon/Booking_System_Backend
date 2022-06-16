@@ -7,9 +7,9 @@ namespace BookingSystem.Models.Service
 {
     public class ServiceModel
     {
-        public int ServiceId { get; set; }
-        public string ServiceName { get; set; }
-        public string ServiceFee { get; set; }
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public decimal Fee { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
     }
