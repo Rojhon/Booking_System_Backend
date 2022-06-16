@@ -108,6 +108,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Global.asax" />
+    <Content Include="Sql\Positions.sql" />
+    <Content Include="Sql\Tests.sql" />
+    <Content Include="Sql\Users.sql" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
@@ -119,8 +122,14 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\Offices\OfficeModel.cs" />
+    <Compile Include="Models\Requests\RequestHistoryModel.cs" />
+    <Compile Include="Models\Requests\RequestModel.cs" />
+    <Compile Include="Models\Requests\RequestStatusModel.cs" />
+    <Compile Include="Models\Requests\TrackingStatusModel.cs" />
     <Compile Include="Models\Services\ServiceModel.cs" />
     <Compile Include="Models\Test\TestModel.cs" />
+    <Compile Include="Models\Users\PositionModel.cs" />
+    <Compile Include="Models\Users\UserModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -135,7 +144,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Sql\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
