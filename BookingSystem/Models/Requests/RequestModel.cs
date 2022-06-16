@@ -14,7 +14,7 @@ namespace BookingSystem.Models.Requests
         public int StatusId { get; set; }
         public string UserNote { get; set; }
         public string OfficeNote { get; set; }
-        public string LinkToFile { get; set; }
+        public string File { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
         public DateTime FinishedAt { get; set; }
