@@ -1,0 +1,15 @@
+﻿CREATE TABLE Users (
+Id int identity (1,1) not null,
+UserNumber varchar(50) null,
+FirstName varchar(50) null,
+LastName varchar(50) null,
+Position varchar(50) null,
+Email varchar(50) null,
+Password varchar(50) null,
+Role varchar(50) null,
+Verified varchar(50) null,
+Active varchar(50) null,
+CreatedAt DateTime null,
+UpdatedAt DateTime null,
+FinishedAt DateTime null,
+);
