@@ -8,10 +8,10 @@ namespace BookingSystem.Models.Requests
     public class RequestModel
     {
         public int Id { get; set; }
-        public int TrackingId { get; set; }
+        public string TrackingId { get; set; }
         public int OfficeId { get; set; }
         public int ServiceId { get; set; }
-        public int StatusId { get; set; }
+        public string Status { get; set; }
         public string UserNote { get; set; }
         public string OfficeNote { get; set; }
         public string File { get; set; }

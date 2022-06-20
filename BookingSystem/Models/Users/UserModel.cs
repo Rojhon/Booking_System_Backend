@@ -18,6 +18,5 @@ namespace BookingSystem.Models.Users
         public string Active { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
-        public DateTime FinishedAt { get; set; }
     }
 }

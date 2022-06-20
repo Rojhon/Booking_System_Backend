@@ -108,27 +108,29 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Global.asax" />
-    <Content Include="Sql\Positions.sql" />
+    <Content Include="Sql\CreateTable.sql" />
+    <Content Include="Sql\DropTable.sql" />
+    <Content Include="Sql\Insert.sql" />
+    <Content Include="Sql\SQLQuery.sql" />
     <Content Include="Sql\Tests.sql" />
-    <Content Include="Sql\Users.sql" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Controllers\Request\RequestController.cs" />
     <Compile Include="Controllers\Test\TestController.cs" />
+    <Compile Include="Data\DAO.cs" />
+    <Compile Include="Data\Request\RequestDAO.cs" />
     <Compile Include="Data\Test\TestDAO.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\Offices\OfficeModel.cs" />
-    <Compile Include="Models\Requests\RequestHistoryModel.cs" />
     <Compile Include="Models\Requests\RequestModel.cs" />
     <Compile Include="Models\Requests\RequestStatusModel.cs" />
-    <Compile Include="Models\Requests\TrackingStatusModel.cs" />
     <Compile Include="Models\Services\ServiceModel.cs" />
     <Compile Include="Models\Test\TestModel.cs" />
-    <Compile Include="Models\Users\PositionModel.cs" />
     <Compile Include="Models\Users\UserModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

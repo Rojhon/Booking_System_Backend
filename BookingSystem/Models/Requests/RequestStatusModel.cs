@@ -5,6 +5,7 @@ using System.Web;
 
 namespace BookingSystem.Models.Requests
 {
+    // Wala na to, pang ready nalang kung gagamitin.
     public class RequestStatusModel
     {
         public int Id { get; set; }

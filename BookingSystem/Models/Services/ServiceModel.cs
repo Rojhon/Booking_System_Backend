@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace BookingSystem.Models.Service
+namespace BookingSystem.Models.Services
 {
     public class ServiceModel
     {
