@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using BookingSystem.Models.Requests;
 
 namespace BookingSystem.Models.Requests
 {
@@ -14,7 +15,7 @@ namespace BookingSystem.Models.Requests
         public string Status { get; set; }
         public string UserNote { get; set; }
         public string OfficeNote { get; set; }
-        public string File { get; set; }
+        public string FileData { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
         public DateTime FinishedAt { get; set; }

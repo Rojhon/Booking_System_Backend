@@ -23,7 +23,7 @@ CREATE TABLE Requests (
     Status VARCHAR(50) NOT NULL DEFAULT 'Pending', 
     UserNote VARCHAR(50) NULL,
     OfficeNote VARCHAR(50) NULL,
-    ObjFile VARCHAR(50) NULL,
+    FileData VARCHAR(MAX) NULL,
     CreatedAt DATETIME NOT NULL DEFAULT GETDATE(), 
     UpdatedAt DATETIME NOT NULl DEFAULT GETDATE(),
     FinishedAt DATETIME NULL

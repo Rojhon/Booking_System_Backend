@@ -7,6 +7,8 @@ using BookingSystem.Models.Requests;
 using BookingSystem.Models.Offices;
 using BookingSystem.Models.Services;
 using System.Data.SqlClient;
+using System.Diagnostics;
+using System.IO;
 
 namespace BookingSystem.Data.Request
 {
@@ -21,19 +23,22 @@ namespace BookingSystem.Data.Request
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
                     connection.Open();
-                    string sqlQuery = "INSERT INTO Requests (OfficeId, ServiceId, UserNote) Values(@OfficeId, @ServiceId, @UserNote)";
+                    string sqlQuery = "INSERT INTO Requests (OfficeId, ServiceId, UserNote, FileData) Values(@OfficeId, @ServiceId, @UserNote, @FileData)";
 
                     SqlCommand command = new SqlCommand(sqlQuery, connection);
 
                     command.Parameters.AddWithValue("@OfficeId", requestModel.OfficeId);
                     command.Parameters.AddWithValue("@ServiceId", requestModel.ServiceId);
                     command.Parameters.AddWithValue("@UserNote", requestModel.UserNote);
+                    command.Parameters.AddWithValue("@FileData", requestModel.FileData);
 
                     command.ExecuteNonQuery();
                     connection.Close();
                 }
 
-                return "Success";
+                Debug.WriteLine(requestModel.FileData);
+
+                    return "Success";
             }
             catch (Exception e)
             {
@@ -239,10 +244,11 @@ namespace BookingSystem.Data.Request
                             requestModel.ServiceId = reader.GetInt32(3);
                             requestModel.Status = reader.GetString(4);
                             requestModel.UserNote = reader.GetString(5);
-                            requestModel.OfficeNote = reader.GetString(6);
+                            //requestModel.OfficeNote = reader.GetString(6);
+                            requestModel.FileData = reader.GetString(7);
                             requestModel.CreatedAt = reader.GetDateTime(8);
                             requestModel.UpdatedAt = reader.GetDateTime(9);
-                            requestModel.FinishedAt = reader.GetDateTime(10);
+                            //requestModel.FinishedAt = reader.GetDateTime(10);
 
                             returnList.Add(requestModel);
                         }

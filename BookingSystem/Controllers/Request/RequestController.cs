@@ -63,7 +63,7 @@ namespace BookingSystem.Controllers.Request
             return serviceModels;
         }
 
-        [Route("api/request/get-all-request")]
+        [Route("api/request/get-all-requests")]
         [HttpGet]
         public List<RequestModel> GetAllTest()
         {

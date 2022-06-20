@@ -6,7 +6,7 @@
 --SET UserNote = 'Alfred Schmidt', UpdatedAt= getdate()
 --WHERE Id = 1;
 
+DROP TABLE Requests;
 DROP TABLE Offices;
 DROP TABLE Services;
-DROP TABLE Requests;
 DROP TABLE Users;
