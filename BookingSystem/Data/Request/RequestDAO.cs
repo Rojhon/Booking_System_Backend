@@ -9,6 +9,8 @@ using BookingSystem.Models.Services;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.IO;
+using System.Data.SqlTypes;
+using BookingSystem.Helper;
 
 namespace BookingSystem.Data.Request
 {
@@ -47,10 +49,10 @@ namespace BookingSystem.Data.Request
             }
         }
 
-        public RequestModel FindOne(string trackingId)
+        public List<RequestModel> FindOne(string trackingId)
         {
-            RequestModel requestModel = new RequestModel();
-
+            List<RequestModel> requestList = new List<RequestModel>();
+            Debug.WriteLine(trackingId);
             try
             {
                 using (SqlConnection connection = new SqlConnection(connectionString))
@@ -63,28 +65,34 @@ namespace BookingSystem.Data.Request
 
                     if (reader.HasRows)
                     {
+                        Debug.WriteLine("not null");
                         while (reader.Read())
                         {
-                            requestModel.Id = reader.GetInt32(0);
-                            requestModel.TrackingId = reader.GetString(1);
-                            requestModel.OfficeId = reader.GetInt32(2);
-                            requestModel.ServiceId = reader.GetInt32(3);
-                            requestModel.Status = reader.GetString(4);
-                            requestModel.UserNote = reader.GetString(5);
-                            requestModel.CreatedAt = reader.GetDateTime(8);
-                            requestModel.UpdatedAt = reader.GetDateTime(9);
+                            RequestModel requestModel = new RequestModel();
+                            requestModel.Id = Convert.ToInt32(reader["Id"]);
+                            requestModel.TrackingId = Convert.ToString(reader["TrackingId"]);
+                            requestModel.OfficeId = Convert.ToInt32(reader["OfficeId"]);
+                            requestModel.ServiceId = Convert.ToInt32(reader["ServiceId"]);
+                            requestModel.Status = Convert.ToString(reader["Status"]);
+                            requestModel.UserNote = Convert.ToString(reader["UserNote"]);
+                            requestModel.OfficeNote = Convert.ToString(reader["OfficeNote"]);
+                            requestModel.FileData = Convert.ToString(reader["FileData"]);
+                            requestModel.CreatedAt = Convert.ToDateTime(reader["CreatedAt"]);
+                            requestModel.UpdatedAt = Convert.ToDateTime(reader["UpdatedAt"]);
+                            requestModel.FinishedAt = Validate.Date(reader, "FinishedAt");
+                            requestList.Add(requestModel);
                         }
                     }
 
                     connection.Close();
                 }
 
-                return requestModel;
+                return requestList;
             }
             catch (Exception e)
             {
                 System.Diagnostics.Debug.WriteLine(e);
-                return requestModel;
+                return requestList;
             }
         }
 
@@ -158,8 +166,8 @@ namespace BookingSystem.Data.Request
                         {
                             OfficeModel officeModel = new OfficeModel();
 
-                            officeModel.Id = reader.GetInt32(0);
-                            officeModel.Name = reader.GetString(1);
+                            officeModel.Id = Convert.ToInt32(reader["Id"]);
+                            officeModel.Name = Convert.ToString(reader["Name"]);
 
                             returnList.Add(officeModel);
                         }
@@ -198,9 +206,9 @@ namespace BookingSystem.Data.Request
                         {
                             ServiceModel serviceModel = new ServiceModel();
 
-                            serviceModel.Id = reader.GetInt32(0);
-                            serviceModel.Name = reader.GetString(1);
-                            serviceModel.Fee = reader.GetDecimal(2);
+                            serviceModel.Id = Convert.ToInt32(reader["Id"]);
+                            serviceModel.Name = Convert.ToString(reader["Name"]);
+                            serviceModel.Fee = Convert.ToDecimal(reader["Fee"]);
                             returnList.Add(serviceModel);
                         }
                     }
@@ -238,21 +246,21 @@ namespace BookingSystem.Data.Request
                         {
                             RequestModel requestModel = new RequestModel();
 
-                            requestModel.Id = reader.GetInt32(0);
-                            requestModel.TrackingId = reader.GetString(1);
-                            requestModel.OfficeId = reader.GetInt32(2);
-                            requestModel.ServiceId = reader.GetInt32(3);
-                            requestModel.Status = reader.GetString(4);
-                            requestModel.UserNote = reader.GetString(5);
-                            //requestModel.OfficeNote = reader.GetString(6);
-                            requestModel.FileData = reader.GetString(7);
-                            requestModel.CreatedAt = reader.GetDateTime(8);
-                            requestModel.UpdatedAt = reader.GetDateTime(9);
-                            //requestModel.FinishedAt = reader.GetDateTime(10);
-
+                            requestModel.Id = Convert.ToInt32(reader["Id"]);
+                            requestModel.TrackingId = Convert.ToString(reader["TrackingId"]);
+                            requestModel.OfficeId = Convert.ToInt32(reader["OfficeId"]);
+                            requestModel.ServiceId = Convert.ToInt32(reader["ServiceId"]);
+                            requestModel.Status = Convert.ToString(reader["Status"]);
+                            requestModel.UserNote = Convert.ToString(reader["UserNote"]);
+                            requestModel.OfficeNote = Convert.ToString(reader["OfficeNote"]);
+                            requestModel.FileData = Convert.ToString(reader["FileData"]);
+                            requestModel.CreatedAt = Convert.ToDateTime(reader["CreatedAt"]);
+                            requestModel.UpdatedAt = Convert.ToDateTime(reader["UpdatedAt"]);
+                            requestModel.FinishedAt = Validate.Date(reader, "FinishedAt");
                             returnList.Add(requestModel);
                         }
                     }
+
 
                     connection.Close();
                 }
@@ -265,6 +273,7 @@ namespace BookingSystem.Data.Request
                 return returnList;
             }
         }
+
 
         // It's working but the code is a mess.
         //public void Create(ModelHandler modelHandler)
@@ -291,7 +300,7 @@ namespace BookingSystem.Data.Request
         //        SqlCommand requestCommand = new SqlCommand(requestQuery, connection);
 
         //        // Ids
-             
+
 
         //        // Parameter
         //        officeCommand.Parameters.AddWithValue("@OfficeName", modelHandler.officeModel.Name);

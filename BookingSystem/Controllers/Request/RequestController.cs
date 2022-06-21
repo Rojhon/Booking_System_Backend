@@ -26,7 +26,7 @@ namespace BookingSystem.Controllers.Request
 
         [Route("api/request/get-request/{trackingId}")]
         [HttpGet]
-        public RequestModel GetRequest(string trackingId)
+        public List<RequestModel> GetRequest(string trackingId)
         {
             return requestDAO.FindOne(trackingId);
         }
