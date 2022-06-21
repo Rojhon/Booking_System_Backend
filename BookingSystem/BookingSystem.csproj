@@ -128,10 +128,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\Offices\OfficeModel.cs" />
-<<<<<<< HEAD
     <Compile Include="Models\Requests\File.cs" />
-=======
->>>>>>> 2f5dbf862595d26dc541c287a02a7d389f119de9
     <Compile Include="Models\Requests\RequestModel.cs" />
     <Compile Include="Models\Requests\RequestStatusModel.cs" />
     <Compile Include="Models\Services\ServiceModel.cs" />
