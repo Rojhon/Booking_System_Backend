@@ -1,4 +1,5 @@
 BookingSystem/bin/
 BookingSystem/obj/
+BookingSystem/BookingSystem.csproj/
 *.suo
 .vs
