@@ -14,6 +14,14 @@ INSERT INTO Services(Name, Fee) VALUES ('Certificate of Good Moral Character', 2
 INSERT INTO Services(Name, Fee) VALUES ('Form 137(For High School and Senior High School)', 0);
 INSERT INTO Services(Name, Fee) VALUES ('Second Copy of Diploma', 0);
 
+INSERT INTO Statuses(Id, Name) VALUES (1, 'Paid');
+INSERT INTO Statuses(Id, Name) VALUES (2, 'Processing');
+INSERT INTO Statuses(Id, Name) VALUES (3, 'Pending');
+INSERT INTO Statuses(Id, Name) VALUES (4, 'Payment Required');
+
+INSERT INTO Roles(Id, Name) VALUES (1, 'Admin');
+INSERT INTO Roles(Id, Name) VALUES (2, 'Officer');
+
 --INSERT INTO Requests (UserNote) VALUES ('Request1');
 --INSERT INTO Requests (OfficeId, ServiceId, UserNote) VALUES (1, 2, 'Request2');
 --INSERT INTO Requests (OfficeId, ServiceId, UserNote) VALUES (2, 3, 'Request3');

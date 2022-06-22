@@ -71,7 +71,7 @@ namespace BookingSystem.Data.Request
                             requestModel.TrackingId = Convert.ToString(reader["TrackingId"]);
                             requestModel.OfficeId = Convert.ToInt32(reader["OfficeId"]);
                             requestModel.ServiceId = Convert.ToInt32(reader["ServiceId"]);
-                            requestModel.Status = Convert.ToString(reader["Status"]);
+                            requestModel.StatusId = Convert.ToInt32(reader["StatusId"]);
                             requestModel.UserNote = Convert.ToString(reader["UserNote"]);
                             requestModel.OfficeNote = Convert.ToString(reader["OfficeNote"]);
                             requestModel.FileData = Convert.ToString(reader["FileData"]);
@@ -108,7 +108,7 @@ namespace BookingSystem.Data.Request
                     command.Parameters.AddWithValue("@TrackingId", requestModel.TrackingId);
                     command.Parameters.AddWithValue("@UserNote", requestModel.UserNote);
                     command.Parameters.AddWithValue("@OfficeNote", requestModel.OfficeNote);
-                    command.Parameters.AddWithValue("@Status", requestModel.Status);
+                    command.Parameters.AddWithValue("@StatusId", requestModel.StatusId);
                     command.ExecuteNonQuery();
                     connection.Close();
                 }
@@ -250,7 +250,7 @@ namespace BookingSystem.Data.Request
                             requestModel.TrackingId = Convert.ToString(reader["TrackingId"]);
                             requestModel.OfficeId = Convert.ToInt32(reader["OfficeId"]);
                             requestModel.ServiceId = Convert.ToInt32(reader["ServiceId"]);
-                            requestModel.Status = Convert.ToString(reader["Status"]);
+                            requestModel.StatusId = Convert.ToInt32(reader["StatusId"]);
                             requestModel.UserNote = Convert.ToString(reader["UserNote"]);
                             requestModel.OfficeNote = Convert.ToString(reader["OfficeNote"]);
                             requestModel.FileData = Convert.ToString(reader["FileData"]);
