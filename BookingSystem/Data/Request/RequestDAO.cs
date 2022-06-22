@@ -103,11 +103,12 @@ namespace BookingSystem.Data.Request
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
                     connection.Open();
-                    string query = "Update Requests Set UserNote=@UserNote, Status=@Status Where TrackingId=@TrackingId";
+                    string query = "Update Requests Set UserNote=@UserNote, OfficeNote=@OfficeNote, Status=@Status, UpdatedAt=GETDATE() Where TrackingId=@TrackingId";
                     SqlCommand command = new SqlCommand(query, connection);
 
                     command.Parameters.AddWithValue("@TrackingId", requestModel.TrackingId);
                     command.Parameters.AddWithValue("@UserNote", requestModel.UserNote);
+                    command.Parameters.AddWithValue("@OfficeNote", requestModel.OfficeNote);
                     command.Parameters.AddWithValue("@Status", requestModel.Status);
                     command.ExecuteNonQuery();
                     connection.Close();
