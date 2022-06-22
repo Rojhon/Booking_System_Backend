@@ -121,9 +121,13 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\Request\RequestController.cs" />
     <Compile Include="Controllers\Test\TestController.cs" />
+    <Compile Include="Controllers\User\LoginController.cs" />
+    <Compile Include="Controllers\User\RegisterController.cs" />
     <Compile Include="Data\DAO.cs" />
     <Compile Include="Data\Request\RequestDAO.cs" />
     <Compile Include="Data\Test\TestDAO.cs" />
+    <Compile Include="Data\User\LoginDAO.cs" />
+    <Compile Include="Data\User\RegisterDAO.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>

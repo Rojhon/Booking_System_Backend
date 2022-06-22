@@ -25,7 +25,7 @@ namespace BookingSystem.Data.Request
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
                     connection.Open();
-                    string sqlQuery = "INSERT INTO Requests (OfficeId, ServiceId, UserNote, FileData) Values(@OfficeId, @ServiceId, @UserNote, @FileData)";
+                    string sqlQuery = "INSERT INTO Requests (OfficeId, ServiceId, UserNote, FileData, FileName) Values(@OfficeId, @ServiceId, @UserNote, @FileData, @FileName)";
 
                     SqlCommand command = new SqlCommand(sqlQuery, connection);
 
@@ -33,12 +33,10 @@ namespace BookingSystem.Data.Request
                     command.Parameters.AddWithValue("@ServiceId", requestModel.ServiceId);
                     command.Parameters.AddWithValue("@UserNote", requestModel.UserNote);
                     command.Parameters.AddWithValue("@FileData", requestModel.FileData);
-
+                    command.Parameters.AddWithValue("@FileName", requestModel.FileName);
                     command.ExecuteNonQuery();
                     connection.Close();
                 }
-
-                Debug.WriteLine(requestModel.FileData);
 
                     return "Success";
             }
@@ -77,6 +75,7 @@ namespace BookingSystem.Data.Request
                             requestModel.UserNote = Convert.ToString(reader["UserNote"]);
                             requestModel.OfficeNote = Convert.ToString(reader["OfficeNote"]);
                             requestModel.FileData = Convert.ToString(reader["FileData"]);
+                            requestModel.FileName = Convert.ToString(reader["FileName"]);
                             requestModel.CreatedAt = Convert.ToDateTime(reader["CreatedAt"]);
                             requestModel.UpdatedAt = Convert.ToDateTime(reader["UpdatedAt"]);
                             requestModel.FinishedAt = Validate.Date(reader, "FinishedAt");
@@ -255,6 +254,7 @@ namespace BookingSystem.Data.Request
                             requestModel.UserNote = Convert.ToString(reader["UserNote"]);
                             requestModel.OfficeNote = Convert.ToString(reader["OfficeNote"]);
                             requestModel.FileData = Convert.ToString(reader["FileData"]);
+                            requestModel.FileName = Convert.ToString(reader["FileName"]);
                             requestModel.CreatedAt = Convert.ToDateTime(reader["CreatedAt"]);
                             requestModel.UpdatedAt = Convert.ToDateTime(reader["UpdatedAt"]);
                             requestModel.FinishedAt = Validate.Date(reader, "FinishedAt");
