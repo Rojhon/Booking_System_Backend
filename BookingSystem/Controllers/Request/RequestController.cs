@@ -17,21 +17,21 @@ namespace BookingSystem.Controllers.Request
     {
         public RequestDAO requestDAO = new RequestDAO();
 
-        [Route("api/request/create-request")]
+        [Route("api/request/create")]
         [HttpPost]
         public string CreateRequest([FromBody]RequestModel body)
         {
             return requestDAO.InsertOne(body);
         }
 
-        [Route("api/request/get-request/{trackingId}")]
+        [Route("api/request/get/{trackingId}")]
         [HttpGet]
         public List<RequestModel> GetRequest(string trackingId)
         {
             return requestDAO.FindOne(trackingId);
         }
 
-        [Route("api/request/update-request")]
+        [Route("api/request/update")]
         [HttpPost]
         public string UpdateRequest([FromBody] RequestModel body)
         {
@@ -39,33 +39,17 @@ namespace BookingSystem.Controllers.Request
             return requestDAO.UpdateOne(body);
         }
 
-        [Route("api/request/delete-request/{trackingId}")]
-        [HttpPost]
+        [Route("api/request/delete/{trackingId}")]
+        [HttpDelete]
         public string DeleteRequest(string trackingId)
         {
             //System.Diagnostics.Debug.WriteLine(body);
             return requestDAO.DeleteOne(trackingId);
         }
 
-        [Route("api/request/get-all-offices")]
+        [Route("api/request/get-all")]
         [HttpGet]
-        public List<OfficeModel> GetAllOffices()
-        {
-            List<OfficeModel> officeModels = requestDAO.GetOffices();
-            return officeModels;
-        }
-
-        [Route("api/request/get-all-services")]
-        [HttpGet]
-        public List<ServiceModel> GetAllServices()
-        {
-            List<ServiceModel> serviceModels = requestDAO.GetServices();
-            return serviceModels;
-        }
-
-        [Route("api/request/get-all-requests")]
-        [HttpGet]
-        public List<RequestModel> GetAllTest()
+        public List<RequestModel> GetAll()
         {
             List<RequestModel> requestModels = requestDAO.GetAll();
             return requestModels;

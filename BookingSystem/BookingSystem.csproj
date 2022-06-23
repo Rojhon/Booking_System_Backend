@@ -119,12 +119,16 @@
   <ItemGroup>
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Controllers\Office\OfficeController.cs" />
     <Compile Include="Controllers\Request\RequestController.cs" />
+    <Compile Include="Controllers\Service\ServiceController.cs" />
     <Compile Include="Controllers\Test\TestController.cs" />
     <Compile Include="Controllers\User\LoginController.cs" />
     <Compile Include="Controllers\User\RegisterController.cs" />
     <Compile Include="Data\DAO.cs" />
+    <Compile Include="Data\Office\OfficeDAO.cs" />
     <Compile Include="Data\Request\RequestDAO.cs" />
+    <Compile Include="Data\Service\ServiceDAO.cs" />
     <Compile Include="Data\Test\TestDAO.cs" />
     <Compile Include="Data\User\LoginDAO.cs" />
     <Compile Include="Data\User\RegisterDAO.cs" />
@@ -153,8 +157,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Controllers\Offices\" />
-    <Folder Include="Controllers\Services\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

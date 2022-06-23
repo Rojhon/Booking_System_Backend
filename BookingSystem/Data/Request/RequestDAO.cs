@@ -1,15 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using BookingSystem.Models;
 using BookingSystem.Models.Requests;
 using BookingSystem.Models.Offices;
 using BookingSystem.Models.Services;
 using System.Data.SqlClient;
 using System.Diagnostics;
-using System.IO;
-using System.Data.SqlTypes;
 using BookingSystem.Helper;
 
 namespace BookingSystem.Data.Request
@@ -50,7 +45,6 @@ namespace BookingSystem.Data.Request
         public List<RequestModel> FindOne(string trackingId)
         {
             List<RequestModel> requestList = new List<RequestModel>();
-            Debug.WriteLine(trackingId);
             try
             {
                 using (SqlConnection connection = new SqlConnection(connectionString))
@@ -63,7 +57,6 @@ namespace BookingSystem.Data.Request
 
                     if (reader.HasRows)
                     {
-                        Debug.WriteLine("not null");
                         while (reader.Read())
                         {
                             RequestModel requestModel = new RequestModel();
@@ -142,86 +135,6 @@ namespace BookingSystem.Data.Request
             {
                 System.Diagnostics.Debug.WriteLine(e);
                 return "Error";
-            }
-        }
-
-        public List<OfficeModel> GetOffices()
-        {
-            List<OfficeModel> returnList = new List<OfficeModel>();
-
-            try
-            {
-                using (SqlConnection connection = new SqlConnection(connectionString))
-                {
-                    connection.Open();
-                    string sqlQuery = "SELECT * FROM Offices";
-
-                    SqlCommand command = new SqlCommand(sqlQuery, connection);
-
-                    SqlDataReader reader = command.ExecuteReader();
-
-                    if (reader.HasRows)
-                    {
-                        while (reader.Read())
-                        {
-                            OfficeModel officeModel = new OfficeModel();
-
-                            officeModel.Id = Convert.ToInt32(reader["Id"]);
-                            officeModel.Name = Convert.ToString(reader["Name"]);
-
-                            returnList.Add(officeModel);
-                        }
-                    }
-
-                    connection.Close();
-                }
-
-                return returnList;
-            }
-            catch (Exception e)
-            {
-                System.Diagnostics.Debug.WriteLine(e);
-                return returnList;
-            }
-        }
-
-        public List<ServiceModel> GetServices()
-        {
-            List<ServiceModel> returnList = new List<ServiceModel>();
-
-            try
-            {
-                using (SqlConnection connection = new SqlConnection(connectionString))
-                {
-                    connection.Open();
-                    string sqlQuery = "SELECT * FROM Services";
-
-                    SqlCommand command = new SqlCommand(sqlQuery, connection);
-
-                    SqlDataReader reader = command.ExecuteReader();
-
-                    if (reader.HasRows)
-                    {
-                        while (reader.Read())
-                        {
-                            ServiceModel serviceModel = new ServiceModel();
-
-                            serviceModel.Id = Convert.ToInt32(reader["Id"]);
-                            serviceModel.Name = Convert.ToString(reader["Name"]);
-                            serviceModel.Fee = Convert.ToDecimal(reader["Fee"]);
-                            returnList.Add(serviceModel);
-                        }
-                    }
-
-                    connection.Close();
-                }
-
-                return returnList;
-            }
-            catch (Exception e)
-            {
-                System.Diagnostics.Debug.WriteLine(e);
-                return returnList;
             }
         }
 
