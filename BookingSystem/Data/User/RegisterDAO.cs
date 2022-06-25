@@ -26,7 +26,6 @@ namespace BookingSystem.Data.User
                     command.Parameters.AddWithValue("@Position", UserModel.Position);
                     command.Parameters.AddWithValue("@Email", UserModel.Email);
                     command.Parameters.AddWithValue("@Password", UserModel.Password);
-                    command.Parameters.AddWithValue("@Password", UserModel.Password);
                     command.ExecuteNonQuery();
                     connection.Close();
                 }
@@ -66,6 +65,114 @@ namespace BookingSystem.Data.User
             {
                 System.Diagnostics.Debug.WriteLine(e);
                 return "Error";
+            }
+        }
+        public List<UserModel> FindOne(string UserNumber)
+        {
+            List<UserModel> userList = new List<UserModel>();
+
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+                    string sqlQuery = "SELECT * FROM Users Where UserNumber=@UserNumber";
+                    SqlCommand command = new SqlCommand(sqlQuery, connection);
+                    command.Parameters.AddWithValue("@UserNumber", UserNumber);
+                    SqlDataReader reader = command.ExecuteReader();
+
+                    if (reader.HasRows)
+                    {
+                        while (reader.Read())
+                        {
+                            UserModel userModel = new UserModel();
+                            userModel.Id = Convert.ToInt32(reader["Id"]);
+                            userModel.UserNumber = Convert.ToDecimal(reader["UserNumber"]);
+                            userModel.FirstName = Convert.ToString(reader["FirstName"]);
+                            userModel.LastName = Convert.ToString(reader["LastName"]);
+                            userModel.Position = Convert.ToString(reader["Position"]);
+                            userModel.Email = Convert.ToString(reader["Email"]);
+                            userModel.CreatedAt = Convert.ToDateTime(reader["CreatedAt"]);
+                            userModel.UpdatedAt = Convert.ToDateTime(reader["UpdatedAt"]);
+                            userList.Add(userModel);
+                        }
+                    }
+
+                    connection.Close();
+                }
+
+                return userList;
+            }
+            catch (Exception e)
+            {
+                System.Diagnostics.Debug.WriteLine(e);
+                return userList;
+            }
+        }
+        public string DeleteOne(string UserNumber)
+        {
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+                    string query = "Delete from Users Where UserNumber=@UserNumber";
+                    SqlCommand command = new SqlCommand(query, connection);
+                    command.Parameters.AddWithValue("@UserNumber", UserNumber);
+                    command.ExecuteNonQuery();
+                    connection.Close();
+                }
+
+                return "Deleted";
+            }
+            catch (Exception e)
+            {
+                System.Diagnostics.Debug.WriteLine(e);
+                return "Error";
+            }
+        }
+        public List<UserModel> GetAll()
+        {
+            List<UserModel> returnList = new List<UserModel>();
+
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+                    string sqlQuery = "SELECT * FROM Users";
+
+                    SqlCommand command = new SqlCommand(sqlQuery, connection);
+
+                    SqlDataReader reader = command.ExecuteReader();
+
+                    if (reader.HasRows)
+                    {
+                        while (reader.Read())
+                        {
+                            UserModel userModel = new UserModel();
+
+                            userModel.Id = Convert.ToInt32(reader["Id"]);
+                            userModel.UserNumber = Convert.ToDecimal(reader["UserNumber"]);
+                            userModel.FirstName = Convert.ToString(reader["FirstName"]);
+                            userModel.LastName = Convert.ToString(reader["LastName"]);
+                            userModel.Position = Convert.ToString(reader["Position"]);
+                            userModel.Email = Convert.ToString(reader["Email"]);
+                            userModel.CreatedAt = Convert.ToDateTime(reader["CreatedAt"]);
+                            userModel.UpdatedAt = Convert.ToDateTime(reader["UpdatedAt"]);
+                            returnList.Add(userModel);
+                        }
+                    }
+
+                    connection.Close();
+                }
+
+                return returnList;
+            }
+            catch (Exception e)
+            {
+                System.Diagnostics.Debug.WriteLine(e);
+                return returnList;
             }
         }
 
