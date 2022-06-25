@@ -4,6 +4,9 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using System.Web.Http.Cors;
+using BookingSystem.Models.Users;
+using BookingSystem.Data.User;
 
 namespace BookingSystem.Controllers.User
 {
@@ -11,13 +14,6 @@ namespace BookingSystem.Controllers.User
     public class LoginController : ApiController
     {
         public LoginDAO loginDAO = new LoginDAO();
-
-        [Route("api/login/create")]
-        [HttpPost]
-        public string Createlogin([FromBody]UserModel body)
-        {
-            return loginDAO.InsertOne(body);
-        }
 
         [Route("api/login/get/{Id}")]
         [HttpGet]
@@ -32,13 +28,5 @@ namespace BookingSystem.Controllers.User
         {
             return loginDAO.UpdateOne(body);
         }
-
-        [Route("api/login/delete/{Id}")]
-        [HttpDelete]
-        public string Deletelogin(string Id)
-        {
-            return loginDAO.DeleteOne(Id);
-        }
-
     }
 }

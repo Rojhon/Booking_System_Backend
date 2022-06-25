@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using BookingSystem.Models.Users;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Web;
 
@@ -13,10 +15,10 @@ namespace BookingSystem.Data.User
         {
             try
             {
-                using (SqlConnection con = new SqlConnection(connectionString))
+                using (SqlConnection connection = new SqlConnection(connectionString))
                 {
                     connection.Open();
-                    string query = "Update Requests Set Email=@Email, Password=@Password UpdatedAt=GETDATE() Where UserNumber=@UserNumber";
+                    string sqlQuery = "Update Requests Set Email=@Email, Password=@Password UpdatedAt=GETDATE() Where UserNumber=@UserNumber";
 
                     SqlCommand command = new SqlCommand(sqlQuery, connection);
 

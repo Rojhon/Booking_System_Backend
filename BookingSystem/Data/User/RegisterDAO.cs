@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using BookingSystem.Models.Users;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Web;
 
@@ -15,10 +17,10 @@ namespace BookingSystem.Data.User
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    connection.Open();
+                    con.Open();
                     string sqlQuery = "INSERT INTO Users (UserNumber, FirstName, LastName, Position, Email, Password, CreatedAt) Values(@UserNumber, @FirstName, @LastName, @Position, @Email, @Password, GETDATE())";
 
-                    SqlCommand command = new SqlCommand(sqlQuery, connection);
+                    SqlCommand command = new SqlCommand(sqlQuery, con);
 
                     command.Parameters.AddWithValue("@UserNumber", UserModel.UserNumber);
                     command.Parameters.AddWithValue("@FirstName", UserModel.FirstName);
@@ -27,7 +29,7 @@ namespace BookingSystem.Data.User
                     command.Parameters.AddWithValue("@Email", UserModel.Email);
                     command.Parameters.AddWithValue("@Password", UserModel.Password);
                     command.ExecuteNonQuery();
-                    connection.Close();
+                    con.Close();
                 }
 
                     return "Success";
@@ -44,10 +46,10 @@ namespace BookingSystem.Data.User
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    connection.Open();
-                    string query = "Update Requests Set UserNumber=@UserNumber, FirstName=@FirstName, LastName=@LastName, Position=@Position, Email=@Email, Password=@Password UpdatedAt=GETDATE() Where UserNumber=@UserNumber";
+                    con.Open();
+                    string sqlQuery = "Update Requests Set UserNumber=@UserNumber, FirstName=@FirstName, LastName=@LastName, Position=@Position, Email=@Email, Password=@Password UpdatedAt=GETDATE() Where UserNumber=@UserNumber";
 
-                    SqlCommand command = new SqlCommand(sqlQuery, connection);
+                    SqlCommand command = new SqlCommand(sqlQuery, con);
 
                     command.Parameters.AddWithValue("@UserNumber", UserModel.UserNumber);
                     command.Parameters.AddWithValue("@FirstName", UserModel.FirstName);
@@ -56,7 +58,7 @@ namespace BookingSystem.Data.User
                     command.Parameters.AddWithValue("@Email", UserModel.Email);
                     command.Parameters.AddWithValue("@Password", UserModel.Password);
                     command.ExecuteNonQuery();
-                    connection.Close();
+                    con.Close();
                 }
 
                     return "Updated";
@@ -73,11 +75,11 @@ namespace BookingSystem.Data.User
 
             try
             {
-                using (SqlConnection connection = new SqlConnection(connectionString))
+                using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    connection.Open();
+                    con.Open();
                     string sqlQuery = "SELECT * FROM Users Where UserNumber=@UserNumber";
-                    SqlCommand command = new SqlCommand(sqlQuery, connection);
+                    SqlCommand command = new SqlCommand(sqlQuery, con);
                     command.Parameters.AddWithValue("@UserNumber", UserNumber);
                     SqlDataReader reader = command.ExecuteReader();
 
@@ -87,7 +89,7 @@ namespace BookingSystem.Data.User
                         {
                             UserModel userModel = new UserModel();
                             userModel.Id = Convert.ToInt32(reader["Id"]);
-                            userModel.UserNumber = Convert.ToDecimal(reader["UserNumber"]);
+                            userModel.UserNumber = Convert.ToString(reader["UserNumber"]);
                             userModel.FirstName = Convert.ToString(reader["FirstName"]);
                             userModel.LastName = Convert.ToString(reader["LastName"]);
                             userModel.Position = Convert.ToString(reader["Position"]);
@@ -98,7 +100,7 @@ namespace BookingSystem.Data.User
                         }
                     }
 
-                    connection.Close();
+                    con.Close();
                 }
 
                 return userList;
@@ -113,14 +115,14 @@ namespace BookingSystem.Data.User
         {
             try
             {
-                using (SqlConnection connection = new SqlConnection(connectionString))
+                using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    connection.Open();
-                    string query = "Delete from Users Where UserNumber=@UserNumber";
-                    SqlCommand command = new SqlCommand(query, connection);
+                    con.Open();
+                    string sqlQuery = "Delete from Users Where UserNumber=@UserNumber";
+                    SqlCommand command = new SqlCommand(sqlQuery, con);
                     command.Parameters.AddWithValue("@UserNumber", UserNumber);
                     command.ExecuteNonQuery();
-                    connection.Close();
+                    con.Close();
                 }
 
                 return "Deleted";
@@ -137,12 +139,12 @@ namespace BookingSystem.Data.User
 
             try
             {
-                using (SqlConnection connection = new SqlConnection(connectionString))
+                using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    connection.Open();
+                    con.Open();
                     string sqlQuery = "SELECT * FROM Users";
 
-                    SqlCommand command = new SqlCommand(sqlQuery, connection);
+                    SqlCommand command = new SqlCommand(sqlQuery, con);
 
                     SqlDataReader reader = command.ExecuteReader();
 
@@ -153,7 +155,7 @@ namespace BookingSystem.Data.User
                             UserModel userModel = new UserModel();
 
                             userModel.Id = Convert.ToInt32(reader["Id"]);
-                            userModel.UserNumber = Convert.ToDecimal(reader["UserNumber"]);
+                            userModel.UserNumber = Convert.ToString(reader["UserNumber"]);
                             userModel.FirstName = Convert.ToString(reader["FirstName"]);
                             userModel.LastName = Convert.ToString(reader["LastName"]);
                             userModel.Position = Convert.ToString(reader["Position"]);
@@ -164,7 +166,7 @@ namespace BookingSystem.Data.User
                         }
                     }
 
-                    connection.Close();
+                    con.Close();
                 }
 
                 return returnList;
