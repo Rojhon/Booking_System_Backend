@@ -15,7 +15,7 @@ namespace BookingSystem.Data.Request
     {
         private string connectionString = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=BookingSystemDatabase;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
         public string path = HttpContext.Current.Server.MapPath("~/Files"); //Path
-        public string localPath = @"c:\temp";
+        public string localPath = @"c:\BookingSystemFiles";
 
 
         public bool SaveFile(string fileBase64, string fileName, string path)
@@ -28,7 +28,6 @@ namespace BookingSystem.Data.Request
 
             //set the file path
             string filePath = Path.Combine(path, fileName);
-
             byte[] fileBytes = Convert.FromBase64String(fileBase64);
 
             File.WriteAllBytes(filePath, fileBytes);
@@ -40,23 +39,29 @@ namespace BookingSystem.Data.Request
         {
             try
             {
-                SaveFile(requestModel.FileData, requestModel.FileName, path);
-                SaveFile(requestModel.FileData, requestModel.FileName, localPath);
+                DateTime currentDate = DateTime.Now;
+                string trackingId = $"{Generate.RandomString(9)}-{Convert.ToString(currentDate.Ticks)}-{Convert.ToString(requestModel.OfficeId)}-{Convert.ToString(requestModel.ServiceId)}";
+                var fileName = $"{trackingId}.pdf";
 
-                //using (SqlConnection connection = new SqlConnection(connectionString))
-                //{
-                //    connection.Open();
-                //    string sqlQuery = "INSERT INTO Requests (OfficeId, ServiceId, UserNote, FileName) Values(@OfficeId, @ServiceId, @UserNote, @FileName)";
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+                    string sqlQuery = "INSERT INTO Requests (TrackingId, OfficeId, ServiceId, UserNote, FileName) Values(@TrackingId, @OfficeId, @ServiceId, @UserNote, @FileName)";
 
-                //    SqlCommand command = new SqlCommand(sqlQuery, connection);
+                    SqlCommand command = new SqlCommand(sqlQuery, connection);
 
-                //    command.Parameters.AddWithValue("@OfficeId", requestModel.OfficeId);
-                //    command.Parameters.AddWithValue("@ServiceId", requestModel.ServiceId);
-                //    command.Parameters.AddWithValue("@UserNote", requestModel.UserNote);
-                //    command.Parameters.AddWithValue("@FileName", requestModel.FileName);
-                //    command.ExecuteNonQuery();
-                //    connection.Close();
-                //}
+                    command.Parameters.AddWithValue("@TrackingId", trackingId);
+                    command.Parameters.AddWithValue("@OfficeId", requestModel.OfficeId);
+                    command.Parameters.AddWithValue("@ServiceId", requestModel.ServiceId);
+                    command.Parameters.AddWithValue("@UserNote", requestModel.UserNote);
+                    command.Parameters.AddWithValue("@FileName", requestModel.FileName);
+                    command.ExecuteNonQuery();
+                    connection.Close();
+                }
+
+                SaveFile(requestModel.FileData, fileName, path);
+                SaveFile(requestModel.FileData, fileName, localPath);
+
                 return "Success";
             }
             catch (Exception e)
@@ -71,6 +76,15 @@ namespace BookingSystem.Data.Request
             List<RequestModel> requestList = new List<RequestModel>();
             try
             {
+                var fileName = $"{trackingId}.pdf";
+                var filePath = Path.Combine(path, fileName);
+                Byte[] fileByte = File.ReadAllBytes(filePath);
+                var fileBase64 = Convert.ToBase64String(fileByte);
+
+                Debug.WriteLine(fileByte);
+                Debug.WriteLine(fileBase64);
+
+
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
                     connection.Open();
@@ -91,7 +105,7 @@ namespace BookingSystem.Data.Request
                             requestModel.StatusId = Convert.ToInt32(reader["StatusId"]);
                             requestModel.UserNote = Convert.ToString(reader["UserNote"]);
                             requestModel.OfficeNote = Convert.ToString(reader["OfficeNote"]);
-                            requestModel.FilePath = Convert.ToString(reader["FilePath"]);
+                            requestModel.FileData = Convert.ToString(fileBase64);
                             requestModel.FileName = Convert.ToString(reader["FileName"]);
                             requestModel.CreatedAt = Convert.ToDateTime(reader["CreatedAt"]);
                             requestModel.UpdatedAt = Convert.ToDateTime(reader["UpdatedAt"]);
@@ -132,7 +146,7 @@ namespace BookingSystem.Data.Request
 
                 return "Updated";
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 System.Diagnostics.Debug.WriteLine(e);
                 return "Error";
@@ -153,6 +167,10 @@ namespace BookingSystem.Data.Request
                     connection.Close();
                 }
 
+                var fileName = $"{trackingId}.pdf";
+                File.Delete(Path.Combine(path, fileName));
+                File.Delete(Path.Combine(localPath, fileName));
+
                 return "Deleted";
             }
             catch (Exception e)
@@ -165,7 +183,6 @@ namespace BookingSystem.Data.Request
         public List<RequestModel> GetAll()
         {
             List<RequestModel> returnList = new List<RequestModel>();
-
             try
             {
                 using (SqlConnection connection = new SqlConnection(connectionString))
@@ -205,64 +222,11 @@ namespace BookingSystem.Data.Request
 
                 return returnList;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 System.Diagnostics.Debug.WriteLine(e);
                 return returnList;
             }
         }
-
-
-        // It's working but the code is a mess.
-        //public void Create(ModelHandler modelHandler)
-        //{
-        //    using (SqlConnection connection = new SqlConnection(connectionString))
-        //    {
-        //        connection.Open();
-
-        //        // Query
-        //        string officeQuery = "INSERT INTO Offices (Name) Values(@OfficeName); SELECT CAST(scope_identity() AS int)";
-        //        string serviceQuery = "INSERT INTO Services (Name, Fee) Values(@ServiceName, @ServiceFee); SELECT CAST(scope_identity() AS int)";
-        //        string statusQuery = "INSERT INTO RequestStatuses (Type) Values(@StatusType); SELECT CAST(scope_identity() AS int)";
-        //        string requestQuery = "INSERT INTO Requests " +
-        //            "(OfficeId, ServiceId, StatusId, UserNote) " +
-        //            "Values(@RequestOfficeId," +
-        //            " @RequestServiceId," +
-        //            " @RequestStatusId," +
-        //            " @RequestUserNote); SELECT CAST(scope_identity() AS int)";
-
-        //        // Commands
-        //        SqlCommand officeCommand = new SqlCommand(officeQuery, connection);
-        //        SqlCommand serviceCommand = new SqlCommand(serviceQuery, connection);
-        //        SqlCommand statusCommand = new SqlCommand(statusQuery, connection);
-        //        SqlCommand requestCommand = new SqlCommand(requestQuery, connection);
-
-        //        // Ids
-
-
-        //        // Parameter
-        //        officeCommand.Parameters.AddWithValue("@OfficeName", modelHandler.officeModel.Name);
-
-        //        serviceCommand.Parameters.AddWithValue("@ServiceName", modelHandler.serviceModel.Name);
-        //        serviceCommand.Parameters.AddWithValue("@ServiceFee", modelHandler.serviceModel.Fee);
-
-        //        statusCommand.Parameters.AddWithValue("@StatusType", modelHandler.requestStatusModel.Type);
-
-        //        int officeId = int.Parse(officeCommand.ExecuteScalar().ToString());
-        //        int serviceId = int.Parse(serviceCommand.ExecuteScalar().ToString());
-        //        int statusId = int.Parse(statusCommand.ExecuteScalar().ToString());
-
-        //        requestCommand.Parameters.AddWithValue("@RequestOfficeId", officeId);
-        //        requestCommand.Parameters.AddWithValue("@RequestServiceId", serviceId);
-        //        requestCommand.Parameters.AddWithValue("@RequestStatusId", statusId);
-        //        requestCommand.Parameters.AddWithValue("@RequestUserNote", modelHandler.requestModel.UserNote);
-
-        //        // Execute
-        //        officeCommand.ExecuteNonQuery();
-        //        serviceCommand.ExecuteNonQuery();
-        //        statusCommand.ExecuteNonQuery();
-        //        requestCommand.ExecuteNonQuery();
-        //    }
-        //}
     }
 }
