@@ -6,34 +6,58 @@ using BookingSystem.Models.Services;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using BookingSystem.Helper;
+using System.IO;
+using System.Web;
 
 namespace BookingSystem.Data.Request
 {
     public class RequestDAO
     {
         private string connectionString = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=BookingSystemDatabase;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
+        public string path = HttpContext.Current.Server.MapPath("~/Files"); //Path
+        public string localPath = @"c:\temp";
+
+
+        public bool SaveFile(string fileBase64, string fileName, string path)
+        {
+            //Check if directory exist
+            if (!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path); //Create directory if it doesn't exist
+            }
+
+            //set the file path
+            string filePath = Path.Combine(path, fileName);
+
+            byte[] fileBytes = Convert.FromBase64String(fileBase64);
+
+            File.WriteAllBytes(filePath, fileBytes);
+
+            return true;
+        }
 
         public string InsertOne(RequestModel requestModel)
         {
             try
             {
-                using (SqlConnection connection = new SqlConnection(connectionString))
-                {
-                    connection.Open();
-                    string sqlQuery = "INSERT INTO Requests (OfficeId, ServiceId, UserNote, FileData, FileName) Values(@OfficeId, @ServiceId, @UserNote, @FileData, @FileName)";
+                SaveFile(requestModel.FileData, requestModel.FileName, path);
+                SaveFile(requestModel.FileData, requestModel.FileName, localPath);
 
-                    SqlCommand command = new SqlCommand(sqlQuery, connection);
+                //using (SqlConnection connection = new SqlConnection(connectionString))
+                //{
+                //    connection.Open();
+                //    string sqlQuery = "INSERT INTO Requests (OfficeId, ServiceId, UserNote, FileName) Values(@OfficeId, @ServiceId, @UserNote, @FileName)";
 
-                    command.Parameters.AddWithValue("@OfficeId", requestModel.OfficeId);
-                    command.Parameters.AddWithValue("@ServiceId", requestModel.ServiceId);
-                    command.Parameters.AddWithValue("@UserNote", requestModel.UserNote);
-                    command.Parameters.AddWithValue("@FileData", requestModel.FileData);
-                    command.Parameters.AddWithValue("@FileName", requestModel.FileName);
-                    command.ExecuteNonQuery();
-                    connection.Close();
-                }
+                //    SqlCommand command = new SqlCommand(sqlQuery, connection);
 
-                    return "Success";
+                //    command.Parameters.AddWithValue("@OfficeId", requestModel.OfficeId);
+                //    command.Parameters.AddWithValue("@ServiceId", requestModel.ServiceId);
+                //    command.Parameters.AddWithValue("@UserNote", requestModel.UserNote);
+                //    command.Parameters.AddWithValue("@FileName", requestModel.FileName);
+                //    command.ExecuteNonQuery();
+                //    connection.Close();
+                //}
+                return "Success";
             }
             catch (Exception e)
             {
@@ -67,7 +91,7 @@ namespace BookingSystem.Data.Request
                             requestModel.StatusId = Convert.ToInt32(reader["StatusId"]);
                             requestModel.UserNote = Convert.ToString(reader["UserNote"]);
                             requestModel.OfficeNote = Convert.ToString(reader["OfficeNote"]);
-                            requestModel.FileData = Convert.ToString(reader["FileData"]);
+                            requestModel.FilePath = Convert.ToString(reader["FilePath"]);
                             requestModel.FileName = Convert.ToString(reader["FileName"]);
                             requestModel.CreatedAt = Convert.ToDateTime(reader["CreatedAt"]);
                             requestModel.UpdatedAt = Convert.ToDateTime(reader["UpdatedAt"]);
