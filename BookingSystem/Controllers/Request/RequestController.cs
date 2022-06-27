@@ -17,37 +17,35 @@ namespace BookingSystem.Controllers.Request
     {
         public RequestDAO requestDAO = new RequestDAO();
 
-        [Route("api/request/create")]
+        [Route("api/request")]
         [HttpPost]
         public string CreateRequest([FromBody]RequestModel body)
         {
             return requestDAO.InsertOne(body);
         }
 
-        [Route("api/request/get/{trackingId}")]
+        [Route("api/request/{trackingId}")]
         [HttpGet]
         public List<RequestModel> GetRequest(string trackingId)
         {
             return requestDAO.FindOne(trackingId);
         }
 
-        [Route("api/request/update")]
-        [HttpPost]
+        [Route("api/request")]
+        [HttpPatch]
         public string UpdateRequest([FromBody] RequestModel body)
         {
-            //System.Diagnostics.Debug.WriteLine(body);
             return requestDAO.UpdateOne(body);
         }
 
-        [Route("api/request/delete/{trackingId}")]
+        [Route("api/request/{trackingId}")]
         [HttpDelete]
         public string DeleteRequest(string trackingId)
         {
-            //System.Diagnostics.Debug.WriteLine(body);
             return requestDAO.DeleteOne(trackingId);
         }
 
-        [Route("api/request/get-all")]
+        [Route("api/request")]
         [HttpGet]
         public List<RequestModel> GetAll()
         {

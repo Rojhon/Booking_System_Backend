@@ -166,7 +166,7 @@ namespace BookingSystem.Data.Request
                             requestModel.StatusId = Convert.ToInt32(reader["StatusId"]);
                             requestModel.UserNote = Convert.ToString(reader["UserNote"]);
                             requestModel.OfficeNote = Convert.ToString(reader["OfficeNote"]);
-                            requestModel.FileData = Convert.ToString(reader["FileData"]);
+                            //requestModel.FileData = Convert.ToString(reader["FileData"]);
                             requestModel.FileName = Convert.ToString(reader["FileName"]);
                             requestModel.CreatedAt = Convert.ToDateTime(reader["CreatedAt"]);
                             requestModel.UpdatedAt = Convert.ToDateTime(reader["UpdatedAt"]);
