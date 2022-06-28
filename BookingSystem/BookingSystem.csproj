@@ -135,6 +135,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Helper\Generate.cs" />
+	<Compile Include="Helper\Hash.cs" />
     <Compile Include="Helper\Validate.cs" />
     <Compile Include="Models\Offices\OfficeModel.cs" />
     <Compile Include="Models\Requests\RequestModel.cs" />

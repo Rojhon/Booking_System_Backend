@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using BookingSystem.Models.Users;
+using BookingSystem.Helper;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Web;
@@ -19,11 +20,12 @@ namespace BookingSystem.Data.User
                 {
                     connection.Open();
                     string sqlQuery = "Update Requests Set Email=@Email, Password=@Password UpdatedAt=GETDATE() Where UserNumber=@UserNumber";
+                    string password = Hash.HashString(UserModel.Password);
 
                     SqlCommand command = new SqlCommand(sqlQuery, connection);
 
                     command.Parameters.AddWithValue("@Email", UserModel.Email);
-                    command.Parameters.AddWithValue("@Password", UserModel.Password);
+                    command.Parameters.AddWithValue("@Password", password);
                     command.ExecuteNonQuery();
                     connection.Close();
                 }
