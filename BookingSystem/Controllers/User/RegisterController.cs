@@ -30,7 +30,7 @@ namespace BookingSystem.Controllers.User
         }
 
         [Route("api/register")]
-        [HttpPost]
+        [HttpPatch]
         public string UpdateUser([FromBody] UserModel body)
         {
             return registerDAO.UpdateOne(body);

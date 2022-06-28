@@ -23,7 +23,7 @@ namespace BookingSystem.Controllers.User
         }
 
         [Route("api/login")]
-        [HttpPost]
+        [HttpPatch]
         public string Updatelogin([FromBody] UserModel body)
         {
             return loginDAO.UpdateOne(body);
