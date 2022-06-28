@@ -15,14 +15,14 @@ namespace BookingSystem.Controllers.User
     {
         public LoginDAO loginDAO = new LoginDAO();
 
-        [Route("api/login/get/{Id}")]
+        [Route("api/login/{Id}")]
         [HttpGet]
         public List<UserModel> Getlogin(string Id)
         {
             return loginDAO.FindOne(Id);
         }
 
-        [Route("api/login/update")]
+        [Route("api/login")]
         [HttpPost]
         public string Updatelogin([FromBody] UserModel body)
         {

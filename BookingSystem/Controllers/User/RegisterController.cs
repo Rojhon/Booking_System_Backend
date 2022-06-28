@@ -15,28 +15,28 @@ namespace BookingSystem.Controllers.User
     {
         public RegisterDAO registerDAO = new RegisterDAO();
 
-        [Route("api/register/create")]
+        [Route("api/register")]
         [HttpPost]
         public string CreateUser([FromBody]UserModel body)
         {
             return registerDAO.InsertOne(body);
         }
 
-        [Route("api/register/get/{Id}")]
+        [Route("api/register/{Id}")]
         [HttpGet]
         public List<UserModel> GetUser(string Id)
         {
             return registerDAO.FindOne(Id);
         }
 
-        [Route("api/register/update")]
+        [Route("api/register")]
         [HttpPost]
         public string UpdateUser([FromBody] UserModel body)
         {
             return registerDAO.UpdateOne(body);
         }
 
-        [Route("api/register/delete/{Id}")]
+        [Route("api/register/{Id}")]
         [HttpDelete]
         public string DeleteUser(string Id)
         {
