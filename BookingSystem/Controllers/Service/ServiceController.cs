@@ -15,29 +15,29 @@ namespace BookingSystem.Controllers.Service
     {
         public ServiceDAO serviceDAO = new ServiceDAO();
 
-        [Route("api/service/create")]
+        [Route("api/service")]
         [HttpPost]
         public string CreateOffice([FromBody]ServiceModel body)
         {
             return serviceDAO.InsertOne(body);
         }
 
-        [Route("api/service/get/{Id}")]
+        [Route("api/service/{Id}")]
         [HttpGet]
         public List<ServiceModel> GetOffice(string Id)
         {
             return serviceDAO.FindOne(Id);
         }
 
-        [Route("api/service/update")]
-        [HttpPost]
+        [Route("api/service")]
+        [HttpPatch]
         public string UpdateOffice([FromBody] ServiceModel body)
         {
             //System.Diagnostics.Debug.WriteLine(body);
             return serviceDAO.UpdateOne(body);
         }
 
-        [Route("api/service/delete/{Id}")]
+        [Route("api/service/{Id}")]
         [HttpDelete]
         public string DeleteOffice(string Id)
         {
@@ -45,7 +45,7 @@ namespace BookingSystem.Controllers.Service
             return serviceDAO.DeleteOne(Id);
         }
 
-        [Route("api/service/get-all")]
+        [Route("api/service")]
         [HttpGet]
         public List<ServiceModel> GetAllOffices()
         {

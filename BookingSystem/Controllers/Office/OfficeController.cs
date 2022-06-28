@@ -15,21 +15,21 @@ namespace BookingSystem.Controllers.Offices
     {
         public OfficeDAO officeDAO = new OfficeDAO();
 
-        [Route("api/office/create")]
+        [Route("api/office")]
         [HttpPost]
         public string CreateOffice([FromBody]OfficeModel body)
         {
             return officeDAO.InsertOne(body);
         }
 
-        [Route("api/office/get/{Id}")]
+        [Route("api/office/{Id}")]
         [HttpGet]
         public List<OfficeModel> GetOffice(string Id)
         {
             return officeDAO.FindOne(Id);
         }
 
-        [Route("api/office/update")]
+        [Route("api/office")]
         [HttpPost]
         public string UpdateOffice([FromBody] OfficeModel body)
         {
@@ -37,7 +37,7 @@ namespace BookingSystem.Controllers.Offices
             return officeDAO.UpdateOne(body);
         }
 
-        [Route("api/office/delete/{Id}")]
+        [Route("api/office/{Id}")]
         [HttpDelete]
         public string DeleteOffice(string Id)
         {
@@ -45,7 +45,7 @@ namespace BookingSystem.Controllers.Offices
             return officeDAO.DeleteOne(Id);
         }
 
-        [Route("api/office/get-all")]
+        [Route("api/office")]
         [HttpGet]
         public List<OfficeModel> GetAllOffices()
         {
