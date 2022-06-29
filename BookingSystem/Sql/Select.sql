@@ -7,6 +7,7 @@ SELECT * FROM Services;
 SELECT * FROM Users;
 SELECT * FROM Statuses;
 SELECT * FROM Roles;
+SELECT * FROM Authentications;
 
 -- Get with order by
 SELECT * FROM Requests ORDER BY TrackingId;

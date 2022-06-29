@@ -136,6 +136,7 @@
     </Compile>
     <Compile Include="Helper\Generate.cs" />
     <Compile Include="Helper\Validate.cs" />
+    <Compile Include="Models\Authentications\AuthenticationModel.cs" />
     <Compile Include="Models\Offices\OfficeModel.cs" />
     <Compile Include="Models\Requests\RequestModel.cs" />
     <Compile Include="Models\Requests\RequestStatusModel.cs" />
