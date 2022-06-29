@@ -41,12 +41,13 @@ namespace BookingSystem.Data.Request
             {
                 DateTime currentDate = DateTime.Now;
                 string trackingId = $"{Generate.RandomString(9)}-{Convert.ToString(currentDate.Ticks)}-{Convert.ToString(requestModel.OfficeId)}-{Convert.ToString(requestModel.ServiceId)}";
-                var fileName = $"{trackingId}.pdf";
+                string fileName = $"{trackingId}-{requestModel.FileName}";
+                string filePath = Path.Combine(path, fileName);
 
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
                     connection.Open();
-                    string sqlQuery = "INSERT INTO Requests (TrackingId, OfficeId, ServiceId, UserNote, FileName) Values(@TrackingId, @OfficeId, @ServiceId, @UserNote, @FileName)";
+                    string sqlQuery = "INSERT INTO Requests (TrackingId, OfficeId, ServiceId, UserNote, FileName, FilePath) Values(@TrackingId, @OfficeId, @ServiceId, @UserNote, @FileName, @FilePath)";
 
                     SqlCommand command = new SqlCommand(sqlQuery, connection);
 
@@ -54,7 +55,8 @@ namespace BookingSystem.Data.Request
                     command.Parameters.AddWithValue("@OfficeId", requestModel.OfficeId);
                     command.Parameters.AddWithValue("@ServiceId", requestModel.ServiceId);
                     command.Parameters.AddWithValue("@UserNote", requestModel.UserNote);
-                    command.Parameters.AddWithValue("@FileName", requestModel.FileName);
+                    command.Parameters.AddWithValue("@FileName", fileName);
+                    command.Parameters.AddWithValue("@FilePath", filePath);
                     command.ExecuteNonQuery();
                     connection.Close();
                 }
