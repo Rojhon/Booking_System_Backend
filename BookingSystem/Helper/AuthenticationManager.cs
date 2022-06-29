@@ -13,12 +13,13 @@ namespace BookingSystem.Helper
 
         public string NewToken(AuthenticationModel authenticationModel)
         {
+            //Delete existing token if already login
             try
             {
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
                     connection.Open();
-                    string sqlQuery = "INSERT INTO Services (Token, UserId, RoleId) Values(@Token, @UserId, @RoleId)";
+                    string sqlQuery = "INSERT INTO Authentications (Token, UserId, RoleId) Values(@Token, @UserId, @RoleId)";
                     SqlCommand command = new SqlCommand(sqlQuery, connection);
 
                     command.Parameters.AddWithValue("@Token", authenticationModel.Token);
@@ -50,6 +51,7 @@ namespace BookingSystem.Helper
                     command.Parameters.AddWithValue("@Token", token);
                     SqlDataReader reader = command.ExecuteReader();
 
+                    //Check if expired
                     connection.Close();
 
                     if (reader.HasRows)

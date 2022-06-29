@@ -14,12 +14,5 @@ namespace BookingSystem.Helper
             if (value == DBNull.Value) return null;
             else return Convert.ToDateTime(reader[name]);
         }
-
-        public static bool Token(string token)
-        {
-            // Sql Logic
-            // "SELECT * FROM Authentication Where Token=@Token"
-            return true;
-        }
     }
 }
