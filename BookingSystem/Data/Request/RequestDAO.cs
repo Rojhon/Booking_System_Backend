@@ -35,42 +35,46 @@ namespace BookingSystem.Data.Request
             return true;
         }
 
-        public string InsertOne(RequestModel requestModel)
+        public string InsertOne(RequestModel requestModel, bool isModelValidate)
         {
-            try
+            if (isModelValidate)
             {
-                DateTime currentDate = DateTime.Now;
-                string trackingId = $"{Generate.RandomString(9)}-{Convert.ToString(currentDate.Ticks)}-{Convert.ToString(requestModel.OfficeId)}-{Convert.ToString(requestModel.ServiceId)}";
-                string fileName = $"{trackingId}-{requestModel.FileName}";
-                string filePath = Path.Combine(path, fileName);
-
-                using (SqlConnection connection = new SqlConnection(connectionString))
+                try
                 {
-                    connection.Open();
-                    string sqlQuery = "INSERT INTO Requests (TrackingId, OfficeId, ServiceId, UserNote, FileName, FilePath) Values(@TrackingId, @OfficeId, @ServiceId, @UserNote, @FileName, @FilePath)";
+                    DateTime currentDate = DateTime.Now;
+                    string trackingId = $"{Generate.RandomString(9)}-{Convert.ToString(currentDate.Ticks)}-{Convert.ToString(requestModel.OfficeId)}-{Convert.ToString(requestModel.ServiceId)}";
+                    string fileName = $"{trackingId}-{requestModel.FileName}";
+                    string filePath = Path.Combine(path, fileName);
 
-                    SqlCommand command = new SqlCommand(sqlQuery, connection);
+                    using (SqlConnection connection = new SqlConnection(connectionString))
+                    {
+                        connection.Open();
+                        string sqlQuery = "INSERT INTO Requests (TrackingId, OfficeId, ServiceId, UserNote, FileName, FilePath) Values(@TrackingId, @OfficeId, @ServiceId, @UserNote, @FileName, @FilePath)";
 
-                    command.Parameters.AddWithValue("@TrackingId", trackingId);
-                    command.Parameters.AddWithValue("@OfficeId", requestModel.OfficeId);
-                    command.Parameters.AddWithValue("@ServiceId", requestModel.ServiceId);
-                    command.Parameters.AddWithValue("@UserNote", requestModel.UserNote);
-                    command.Parameters.AddWithValue("@FileName", fileName);
-                    command.Parameters.AddWithValue("@FilePath", filePath);
-                    command.ExecuteNonQuery();
-                    connection.Close();
+                        SqlCommand command = new SqlCommand(sqlQuery, connection);
+
+                        command.Parameters.AddWithValue("@TrackingId", trackingId);
+                        command.Parameters.AddWithValue("@OfficeId", requestModel.OfficeId);
+                        command.Parameters.AddWithValue("@ServiceId", requestModel.ServiceId);
+                        command.Parameters.AddWithValue("@UserNote", requestModel.UserNote);
+                        command.Parameters.AddWithValue("@FileName", fileName);
+                        command.Parameters.AddWithValue("@FilePath", filePath);
+                        command.ExecuteNonQuery();
+                        connection.Close();
+                    }
+
+                    SaveFile(requestModel.FileData, fileName, path);
+                    SaveFile(requestModel.FileData, fileName, localPath);
+
+                    return "Success";
                 }
-
-                SaveFile(requestModel.FileData, fileName, path);
-                SaveFile(requestModel.FileData, fileName, localPath);
-
-                return "Success";
+                catch (Exception e)
+                {
+                    Debug.WriteLine(e);
+                    return "Error";
+                }
             }
-            catch (Exception e)
-            {
-                System.Diagnostics.Debug.WriteLine(e);
-                return "Error";
-            }
+            else return "The data sent are missing some field/s.";
         }
 
         public List<RequestModel> FindOne(string trackingId)
@@ -128,31 +132,35 @@ namespace BookingSystem.Data.Request
             }
         }
 
-        public string UpdateOne(RequestModel requestModel)
+        public string UpdateOne(RequestModel requestModel, bool isModelValidate)
         {
-            try
+            if (isModelValidate)
             {
-                using (SqlConnection connection = new SqlConnection(connectionString))
+                try
                 {
-                    connection.Open();
-                    string query = "Update Requests Set UserNote=@UserNote, OfficeNote=@OfficeNote, Status=@Status, UpdatedAt=GETDATE() Where TrackingId=@TrackingId";
-                    SqlCommand command = new SqlCommand(query, connection);
+                    using (SqlConnection connection = new SqlConnection(connectionString))
+                    {
+                        connection.Open();
+                        string query = "Update Requests Set UserNote=@UserNote, OfficeNote=@OfficeNote, Status=@Status, UpdatedAt=GETDATE() Where TrackingId=@TrackingId";
+                        SqlCommand command = new SqlCommand(query, connection);
 
-                    command.Parameters.AddWithValue("@TrackingId", requestModel.TrackingId);
-                    command.Parameters.AddWithValue("@UserNote", requestModel.UserNote);
-                    command.Parameters.AddWithValue("@OfficeNote", requestModel.OfficeNote);
-                    command.Parameters.AddWithValue("@StatusId", requestModel.StatusId);
-                    command.ExecuteNonQuery();
-                    connection.Close();
+                        command.Parameters.AddWithValue("@TrackingId", requestModel.TrackingId);
+                        command.Parameters.AddWithValue("@UserNote", requestModel.UserNote);
+                        command.Parameters.AddWithValue("@OfficeNote", requestModel.OfficeNote);
+                        command.Parameters.AddWithValue("@StatusId", requestModel.StatusId);
+                        command.ExecuteNonQuery();
+                        connection.Close();
+                    }
+
+                    return "Updated";
                 }
-
-                return "Updated";
+                catch (Exception e)
+                {
+                    Debug.WriteLine(e);
+                    return "Error";
+                }
             }
-            catch (Exception e)
-            {
-                System.Diagnostics.Debug.WriteLine(e);
-                return "Error";
-            }
+            else return "The data sent are missing some field/s.";
         }
 
         public string DeleteOne(string trackingId)

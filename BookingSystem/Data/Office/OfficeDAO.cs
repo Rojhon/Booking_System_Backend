@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using BookingSystem.Models.Offices;
 using System.Data.SqlClient;
+using System.Diagnostics;
 
 namespace BookingSystem.Data.Office
 {
@@ -9,28 +10,32 @@ namespace BookingSystem.Data.Office
     {
         private string connectionString = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=BookingSystemDatabase;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
 
-        public string InsertOne(OfficeModel officeModel)
+        public string InsertOne(OfficeModel officeModel, bool isModelValidate)
         {
-            try
+            if (isModelValidate)
             {
-                using (SqlConnection connection = new SqlConnection(connectionString))
+                try
                 {
-                    connection.Open();
-                    string sqlQuery = "INSERT INTO Offices (Name) Values(@Name)";
-                    SqlCommand command = new SqlCommand(sqlQuery, connection);
+                    using (SqlConnection connection = new SqlConnection(connectionString))
+                    {
+                        connection.Open();
+                        string sqlQuery = "INSERT INTO Offices (Name) Values(@Name)";
+                        SqlCommand command = new SqlCommand(sqlQuery, connection);
 
-                    command.Parameters.AddWithValue("@Name", officeModel.Name);
-                    command.ExecuteNonQuery();
-                    connection.Close();
+                        command.Parameters.AddWithValue("@Name", officeModel.Name);
+                        command.ExecuteNonQuery();
+                        connection.Close();
+                    }
+
+                    return "Success";
                 }
-
-                return "Success";
+                catch (Exception e)
+                {
+                    System.Diagnostics.Debug.WriteLine(e);
+                    return "Error";
+                }
             }
-            catch (Exception e)
-            {
-                System.Diagnostics.Debug.WriteLine(e);
-                return "Error";
-            }
+            else return "The data sent are missing some field/s.";
         }
 
         public List<OfficeModel> FindOne(string Id)
@@ -72,29 +77,33 @@ namespace BookingSystem.Data.Office
             }
         }
 
-        public string UpdateOne(OfficeModel officeModel)
+        public string UpdateOne(OfficeModel officeModel, bool isModelValidate)
         {
-            try
+            if (isModelValidate)
             {
-                using (SqlConnection connection = new SqlConnection(connectionString))
+                try
                 {
-                    connection.Open();
-                    string query = "Update Offices Set Name=@Name, UpdatedAt=GETDATE() Where Id=@Id";
-                    SqlCommand command = new SqlCommand(query, connection);
+                    using (SqlConnection connection = new SqlConnection(connectionString))
+                    {
+                        connection.Open();
+                        string query = "Update Offices Set Name=@Name, UpdatedAt=GETDATE() Where Id=@Id";
+                        SqlCommand command = new SqlCommand(query, connection);
 
-                    command.Parameters.AddWithValue("@Id", officeModel.Id);
-                    command.Parameters.AddWithValue("@Name", officeModel.Name);
-                    command.ExecuteNonQuery();
-                    connection.Close();
+                        command.Parameters.AddWithValue("@Id", officeModel.Id);
+                        command.Parameters.AddWithValue("@Name", officeModel.Name);
+                        command.ExecuteNonQuery();
+                        connection.Close();
+                    }
+
+                    return "Updated";
                 }
-
-                return "Updated";
+                catch (Exception e)
+                {
+                    Debug.WriteLine(e);
+                    return "Error";
+                }
             }
-            catch (Exception e)
-            {
-                System.Diagnostics.Debug.WriteLine(e);
-                return "Error";
-            }
+            else return "The data sent are missing some field/s.";
         }
 
         public string DeleteOne(string Id)

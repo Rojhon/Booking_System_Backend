@@ -21,7 +21,7 @@ namespace BookingSystem.Controllers.Request
         [HttpPost]
         public string CreateRequest([FromBody]RequestModel body)
         {
-            return requestDAO.InsertOne(body);
+            return requestDAO.InsertOne(body, ModelState.IsValid);
         }
 
         [Route("api/request/{trackingId}")]
@@ -35,7 +35,9 @@ namespace BookingSystem.Controllers.Request
         [HttpPatch]
         public string UpdateRequest([FromBody] RequestModel body)
         {
-            return requestDAO.UpdateOne(body);
+            bool doesIdExist = (body.Id > 0);
+            if (!doesIdExist) ModelState.AddModelError("Id", "Data sent must have an Id");
+            return requestDAO.UpdateOne(body, ModelState.IsValid);
         }
 
         [Route("api/request/{trackingId}")]

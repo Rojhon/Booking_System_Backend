@@ -19,7 +19,7 @@ namespace BookingSystem.Controllers.Service
         [HttpPost]
         public string CreateOffice([FromBody]ServiceModel body)
         {
-            return serviceDAO.InsertOne(body);
+            return serviceDAO.InsertOne(body, ModelState.IsValid);
         }
 
         [Route("api/service/{Id}")]
@@ -33,15 +33,15 @@ namespace BookingSystem.Controllers.Service
         [HttpPatch]
         public string UpdateOffice([FromBody] ServiceModel body)
         {
-            //System.Diagnostics.Debug.WriteLine(body);
-            return serviceDAO.UpdateOne(body);
+            bool doesIdExist = (body.Id > 0);
+            if (!doesIdExist) ModelState.AddModelError("Id", "Data sent must have an Id");
+            return serviceDAO.UpdateOne(body, ModelState.IsValid);
         }
 
         [Route("api/service/{Id}")]
         [HttpDelete]
         public string DeleteOffice(string Id)
         {
-            //System.Diagnostics.Debug.WriteLine(body);
             return serviceDAO.DeleteOne(Id);
         }
 
