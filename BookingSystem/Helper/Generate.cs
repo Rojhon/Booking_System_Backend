@@ -24,7 +24,7 @@ namespace BookingSystem.Helper
             string token = new string(Enumerable.Repeat(chars, length)
                 .Select(s => s[random.Next(s.Length)]).ToArray());
 
-            return token;
+            return "Bearer " + token;
         }
 
     }

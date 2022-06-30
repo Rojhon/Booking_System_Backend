@@ -9,6 +9,8 @@ using BookingSystem.Models.Requests;
 using BookingSystem.Models.Offices;
 using BookingSystem.Models.Services;
 using BookingSystem.Data.Request;
+using BookingSystem.Helper;
+using System.Diagnostics;
 
 namespace BookingSystem.Controllers.Request
 {
@@ -21,36 +23,76 @@ namespace BookingSystem.Controllers.Request
         [HttpPost]
         public string CreateRequest([FromBody]RequestModel body)
         {
-            return requestDAO.InsertOne(body);
+            string token = Convert.ToString(Request.Headers.Authorization);
+
+            if (AuthManager.VerifyToken(token) && AuthManager.VerifyRole(token))
+            {
+                return requestDAO.InsertOne(body);
+            }
+
+            Debug.WriteLine("Forbidden");
+            return "Forbidden";
         }
 
         [Route("api/request/{trackingId}")]
         [HttpGet]
         public List<RequestModel> GetRequest(string trackingId)
         {
-            return requestDAO.FindOne(trackingId);
+            string token = Convert.ToString(Request.Headers.Authorization);
+
+            if (AuthManager.VerifyToken(token))
+            {
+                return requestDAO.FindOne(trackingId);
+            }
+
+            Debug.WriteLine("Forbidden");
+            return new List<RequestModel>();
         }
 
         [Route("api/request")]
         [HttpPatch]
         public string UpdateRequest([FromBody] RequestModel body)
         {
-            return requestDAO.UpdateOne(body);
+            string token = Convert.ToString(Request.Headers.Authorization);
+
+            if (AuthManager.VerifyToken(token) && AuthManager.VerifyRole(token))
+            {
+                return requestDAO.UpdateOne(body);
+            }
+
+            Debug.WriteLine("Forbidden");
+            return "Forbidden";
         }
 
         [Route("api/request/{trackingId}")]
         [HttpDelete]
         public string DeleteRequest(string trackingId)
         {
-            return requestDAO.DeleteOne(trackingId);
+            string token = Convert.ToString(Request.Headers.Authorization);
+
+            if (AuthManager.VerifyToken(token) && AuthManager.VerifyRole(token))
+            {
+                return requestDAO.DeleteOne(trackingId);
+            }
+
+            Debug.WriteLine("Forbidden");
+            return "Forbidden";
         }
 
         [Route("api/request")]
         [HttpGet]
         public List<RequestModel> GetAll()
         {
-            List<RequestModel> requestModels = requestDAO.GetAll();
-            return requestModels;
+            string token = Convert.ToString(Request.Headers.Authorization);
+
+            if (AuthManager.VerifyToken(token))
+            {
+                return requestDAO.GetAll();
+            }
+
+            Debug.WriteLine("Forbidden");
+            return new List<RequestModel>();
+            //return Request.CreateResponse(HttpStatusCode.Forbidden);
         }
 
     }

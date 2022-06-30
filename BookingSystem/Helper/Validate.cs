@@ -14,5 +14,15 @@ namespace BookingSystem.Helper
             if (value == DBNull.Value) return null;
             else return Convert.ToDateTime(reader[name]);
         }
+
+        public static bool DateTimeExpired(DateTime dt1, DateTime dt2)
+        {
+            if(dt1 > dt2)
+            {
+                return true;
+            }
+
+            return false;
+        }
     }
 }

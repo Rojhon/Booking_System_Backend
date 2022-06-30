@@ -19,3 +19,5 @@ SELECT * FROM Requests ORDER BY TrackingId ASC, CreatedAt DESC;
 SELECT * FROM Requests LEFT JOIN Offices ON Requests.OfficeId = Offices.Id;
 SELECT Requests.Id, Requests.StatusId, Requests.UserNote, Requests.OfficeId, Offices.Name FROM Requests INNER JOIN Offices ON Requests.OfficeId = Offices.Id;
 SELECT Requests.Id, Requests.TrackingId, Requests.UserNote, Requests.OfficeNote, Requests.FileName, Offices.Name as Office, Statuses.Name as Status, Requests.CreatedAt, Requests.UpdatedAt FROM Requests INNER JOIN Statuses ON Requests.StatusId=Statuses.Id INNER JOIN Offices ON Requests.OfficeId=Offices.Id;
+
+SELECT Authentications.Id, Authentications.Token, Roles.Name FROM Authentications JOIN Roles ON Authentications.RoleId = Roles.Id WHERE Token = 'Bearer sjdjsgdjgsjgdsd';
