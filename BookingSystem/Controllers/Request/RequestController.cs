@@ -23,30 +23,32 @@ namespace BookingSystem.Controllers.Request
         [HttpPost]
         public string CreateRequest([FromBody]RequestModel body)
         {
-            string token = Convert.ToString(Request.Headers.Authorization);
+            //string token = Convert.ToString(Request.Headers.Authorization);
 
-            if (AuthManager.VerifyToken(token) && AuthManager.VerifyRole(token))
-            {
-                return requestDAO.InsertOne(body);
-            }
+            //if (AuthManager.VerifyToken(token) && AuthManager.VerifyRole(token))
+            //{
+            //    return requestDAO.InsertOne(body, ModelState.IsValid);
+            //}
 
-            Debug.WriteLine("Forbidden");
-            return "Forbidden";
+            //Debug.WriteLine("Forbidden");
+            //return "Forbidden";
+            return requestDAO.InsertOne(body, ModelState.IsValid);
         }
 
         [Route("api/request/{trackingId}")]
         [HttpGet]
         public List<RequestModel> GetRequest(string trackingId)
         {
-            string token = Convert.ToString(Request.Headers.Authorization);
+            //string token = Convert.ToString(Request.Headers.Authorization);
 
-            if (AuthManager.VerifyToken(token))
-            {
-                return requestDAO.FindOne(trackingId);
-            }
+            //if (AuthManager.VerifyToken(token))
+            //{
+            //    return requestDAO.FindOne(trackingId);
+            //}
 
-            Debug.WriteLine("Forbidden");
-            return new List<RequestModel>();
+            //Debug.WriteLine("Forbidden");
+            //return new List<RequestModel>();
+            return requestDAO.FindOne(trackingId);
         }
 
         [Route("api/request")]
@@ -54,10 +56,13 @@ namespace BookingSystem.Controllers.Request
         public string UpdateRequest([FromBody] RequestModel body)
         {
             string token = Convert.ToString(Request.Headers.Authorization);
+            bool doesIdExist = (body.Id > 0);
+
+            if (!doesIdExist) ModelState.AddModelError("Id", "Data sent must have an Id");
 
             if (AuthManager.VerifyToken(token) && AuthManager.VerifyRole(token))
             {
-                return requestDAO.UpdateOne(body);
+                return requestDAO.UpdateOne(body, ModelState.IsValid);
             }
 
             Debug.WriteLine("Forbidden");

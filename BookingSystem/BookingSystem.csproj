@@ -135,6 +135,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Helper\AuthManager.cs" />
+    <Compile Include="Helper\Constants.cs" />
     <Compile Include="Helper\Generate.cs" />
     <Compile Include="Helper\Validate.cs" />
     <Compile Include="Models\Authentications\AuthenticationModel.cs" />

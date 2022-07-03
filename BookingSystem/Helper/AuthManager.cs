@@ -10,7 +10,7 @@ namespace BookingSystem.Helper
 {
     public class AuthManager
     {
-        private static string connectionString = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=BookingSystemDatabase;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
+        private static string connectionString = Constants.ConnectionString;
 
         public static string NewToken(AuthenticationModel authenticationModel)
         {
