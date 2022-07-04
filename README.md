@@ -15,33 +15,33 @@ Description. Description. Description. Description. Description.
 Description. Description. Description. Description. Description. 
 
 **User Endpoint**
-# POST - api/request/create-request
+# POST - api/user/create-request
 Description. Description. Description. Description. Description. 
-# GET - api/request/create-request
+# GET - api/user/create-request
 Description. Description. Description. Description. Description. 
-# PATCH - api/request/create-request
+# PATCH - api/user/create-request
 Description. Description. Description. Description. Description. 
-# DELETE - api/request/create-request
+# DELETE - api/user/create-request
 Description. Description. Description. Description. Description. 
 
 **Office Endpoint**
-# POST - api/request/create-request
+# POST - api/office/create-request
 Description. Description. Description. Description. Description. 
-# GET - api/request/create-request
+# GET - api/office/create-request
 Description. Description. Description. Description. Description. 
-# PATCH - api/request/create-request
+# PATCH - api/office/create-request
 Description. Description. Description. Description. Description. 
-# DELETE - api/request/create-request
+# DELETE - api/office/create-request
 Description. Description. Description. Description. Description. 
 
 **Service Endpoint**
-# POST - api/request/create-request
+# POST - api/service/create-request
 Description. Description. Description. Description. Description. 
-# GET - api/request/create-request
+# GET - api/service/create-request
 Description. Description. Description. Description. Description. 
-# PATCH - api/request/create-request
+# PATCH - api/service/create-request
 Description. Description. Description. Description. Description. 
-# DELETE - api/request/create-request
+# DELETE - api/service/create-request
 Description. Description. Description. Description. Description. 
 
 
