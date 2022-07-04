@@ -32,7 +32,7 @@ namespace BookingSystem.Controllers.Request
 
             //Debug.WriteLine("Forbidden");
             //return "Forbidden";
-            return requestDAO.InsertOne(body, ModelState.IsValid);
+            return requestDAO.InsertOne(body, true);
         }
 
         [Route("api/request/{trackingId}")]
@@ -88,16 +88,9 @@ namespace BookingSystem.Controllers.Request
         [HttpGet]
         public List<RequestModel> GetAll()
         {
-            string token = Convert.ToString(Request.Headers.Authorization);
 
-            if (AuthManager.VerifyToken(token))
-            {
                 return requestDAO.GetAll();
-            }
-
-            Debug.WriteLine("Forbidden");
-            return new List<RequestModel>();
-            //return Request.CreateResponse(HttpStatusCode.Forbidden);
+            
         }
 
     }
