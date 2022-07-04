@@ -130,14 +130,14 @@
     <Compile Include="Data\Service\ServiceDAO.cs" />
     <Compile Include="Data\Test\TestDAO.cs" />
     <Compile Include="Data\User\LoginDAO.cs" />
-    <Compile Include="Data\User\RegisterDAO.cs" />
+    <Compile Include="Data\User\UserDAO.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Helper\AuthManager.cs" />
     <Compile Include="Helper\Constants.cs" />
     <Compile Include="Helper\Generate.cs" />
-	<Compile Include="Helper\Hash.cs" />
+    <Compile Include="Helper\Hash.cs" />
     <Compile Include="Helper\Validate.cs" />
     <Compile Include="Models\Authentications\AuthenticationModel.cs" />
     <Compile Include="Models\Offices\OfficeModel.cs" />

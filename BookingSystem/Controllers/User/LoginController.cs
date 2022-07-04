@@ -13,20 +13,6 @@ namespace BookingSystem.Controllers.User
     [EnableCors(origins: "*", headers: "*", methods: "*")]
     public class LoginController : ApiController
     {
-        public LoginDAO loginDAO = new LoginDAO();
 
-        [Route("api/login/{Id}")]
-        [HttpGet]
-        public List<UserModel> Getlogin(string Id)
-        {
-            return loginDAO.FindOne(Id);
-        }
-
-        [Route("api/login")]
-        [HttpPatch]
-        public string Updatelogin([FromBody] UserModel body)
-        {
-            return loginDAO.UpdateOne(body);
-        }
     }
 }

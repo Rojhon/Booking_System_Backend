@@ -11,36 +11,50 @@ using BookingSystem.Data.User;
 namespace BookingSystem.Controllers.User
 {
     [EnableCors(origins: "*", headers: "*", methods: "*")]
-    public class RegisterController : ApiController
+    public class UserController : ApiController
     {
-        public RegisterDAO registerDAO = new RegisterDAO();
+        public UserDAO userDAO = new UserDAO();
 
-        [Route("api/register")]
+        [Route("api/user")]
         [HttpPost]
         public string CreateUser([FromBody]UserModel body)
         {
-            return registerDAO.InsertOne(body);
+            return userDAO.InsertOne(body);
         }
 
-        [Route("api/register/{Id}")]
+        [Route("api/user/{Id}")]
         [HttpGet]
         public List<UserModel> GetUser(string Id)
         {
-            return registerDAO.FindOne(Id);
+            return userDAO.FindOne(Id);
         }
 
-        [Route("api/register")]
+        [Route("api/user")]
         [HttpPatch]
         public string UpdateUser([FromBody] UserModel body)
         {
-            return registerDAO.UpdateOne(body);
+            return userDAO.UpdateOne(body);
         }
 
-        [Route("api/register/{Id}")]
+        [Route("api/user/{Id}")]
         [HttpDelete]
         public string DeleteUser(string Id)
         {
-            return registerDAO.DeleteOne(Id);
+            return userDAO.DeleteOne(Id);
+        }
+
+        [Route("api/user")]
+        [HttpGet]
+        public List<UserModel> GetAll()
+        {
+            return userDAO.GetAll();
+        }
+
+        [Route("api/user/login")]
+        [HttpPost]
+        public string Login([FromBody]UserModel body)
+        {
+            return userDAO.FindOne(body);
         }
 
     }

@@ -8,7 +8,7 @@ using System.Web;
 
 namespace BookingSystem.Data.User
 {
-    public class RegisterDAO
+    public class UserDAO
     {
         private string connectionString = Constants.ConnectionString;
 
@@ -19,15 +19,14 @@ namespace BookingSystem.Data.User
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     con.Open();
-                    string sqlQuery = "INSERT INTO Users (UserNumber, FirstName, LastName, Position, Email, Password, CreatedAt) Values(@UserNumber, @FirstName, @LastName, @Position, @Email, @Password, GETDATE())";
+                    string sqlQuery = "INSERT INTO Users (FirstName, LastName, RoleId, Email, Password) Values(@FirstName, @LastName, @RoleId, @Email, @Password)";
                     string password = Hash.HashString(UserModel.Password);
 
                     SqlCommand command = new SqlCommand(sqlQuery, con);
 
-                    command.Parameters.AddWithValue("@UserNumber", UserModel.UserNumber);
                     command.Parameters.AddWithValue("@FirstName", UserModel.FirstName);
                     command.Parameters.AddWithValue("@LastName", UserModel.LastName);
-                    command.Parameters.AddWithValue("@Position", UserModel.Position);
+                    command.Parameters.AddWithValue("@RoleId", UserModel.RoleId);
                     command.Parameters.AddWithValue("@Email", UserModel.Email);
                     command.Parameters.AddWithValue("@Password", password);
                     command.ExecuteNonQuery();
@@ -49,15 +48,14 @@ namespace BookingSystem.Data.User
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     con.Open();
-                    string sqlQuery = "Update Requests Set UserNumber=@UserNumber, FirstName=@FirstName, LastName=@LastName, Position=@Position, Email=@Email, Password=@Password UpdatedAt=GETDATE() Where UserNumber=@UserNumber";
+                    string sqlQuery = "Update Requests Set FirstName=@FirstName, LastName=@LastName, RoleId=@RoleId, Email=@Email, Password=@Password UpdatedAt=GETDATE() Where Id=@Id";
                     string password = Hash.HashString(UserModel.Password);
 
                     SqlCommand command = new SqlCommand(sqlQuery, con);
 
-                    command.Parameters.AddWithValue("@UserNumber", UserModel.UserNumber);
                     command.Parameters.AddWithValue("@FirstName", UserModel.FirstName);
                     command.Parameters.AddWithValue("@LastName", UserModel.LastName);
-                    command.Parameters.AddWithValue("@Position", UserModel.Position);
+                    command.Parameters.AddWithValue("@RoleId", UserModel.RoleId);
                     command.Parameters.AddWithValue("@Email", UserModel.Email);
                     command.Parameters.AddWithValue("@Password", password);
                     command.ExecuteNonQuery();
@@ -72,7 +70,7 @@ namespace BookingSystem.Data.User
                 return "Error";
             }
         }
-        public List<UserModel> FindOne(string UserNumber)
+        public List<UserModel> FindOne(string Id)
         {
             List<UserModel> userList = new List<UserModel>();
 
@@ -81,9 +79,9 @@ namespace BookingSystem.Data.User
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     con.Open();
-                    string sqlQuery = "SELECT * FROM Users Where UserNumber=@UserNumber";
+                    string sqlQuery = "SELECT * FROM Users Where Id=@Id";
                     SqlCommand command = new SqlCommand(sqlQuery, con);
-                    command.Parameters.AddWithValue("@UserNumber", UserNumber);
+                    command.Parameters.AddWithValue("@Id", Id);
                     SqlDataReader reader = command.ExecuteReader();
 
                     if (reader.HasRows)
@@ -92,10 +90,9 @@ namespace BookingSystem.Data.User
                         {
                             UserModel userModel = new UserModel();
                             userModel.Id = Convert.ToInt32(reader["Id"]);
-                            userModel.UserNumber = Convert.ToString(reader["UserNumber"]);
                             userModel.FirstName = Convert.ToString(reader["FirstName"]);
                             userModel.LastName = Convert.ToString(reader["LastName"]);
-                            userModel.Position = Convert.ToString(reader["Position"]);
+                            userModel.RoleId = Convert.ToInt32(reader["RoleId"]);
                             userModel.Email = Convert.ToString(reader["Email"]);
                             userModel.CreatedAt = Convert.ToDateTime(reader["CreatedAt"]);
                             userModel.UpdatedAt = Convert.ToDateTime(reader["UpdatedAt"]);
@@ -114,16 +111,16 @@ namespace BookingSystem.Data.User
                 return userList;
             }
         }
-        public string DeleteOne(string UserNumber)
+        public string DeleteOne(string Id)
         {
             try
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     con.Open();
-                    string sqlQuery = "Delete from Users Where UserNumber=@UserNumber";
+                    string sqlQuery = "Delete from Users Where Id=@Id";
                     SqlCommand command = new SqlCommand(sqlQuery, con);
-                    command.Parameters.AddWithValue("@UserNumber", UserNumber);
+                    command.Parameters.AddWithValue("@Id", Id);
                     command.ExecuteNonQuery();
                     con.Close();
                 }
@@ -158,10 +155,9 @@ namespace BookingSystem.Data.User
                             UserModel userModel = new UserModel();
 
                             userModel.Id = Convert.ToInt32(reader["Id"]);
-                            userModel.UserNumber = Convert.ToString(reader["UserNumber"]);
                             userModel.FirstName = Convert.ToString(reader["FirstName"]);
                             userModel.LastName = Convert.ToString(reader["LastName"]);
-                            userModel.Position = Convert.ToString(reader["Position"]);
+                            userModel.RoleId = Convert.ToInt32(reader["RoleId"]);
                             userModel.Email = Convert.ToString(reader["Email"]);
                             userModel.CreatedAt = Convert.ToDateTime(reader["CreatedAt"]);
                             userModel.UpdatedAt = Convert.ToDateTime(reader["UpdatedAt"]);
@@ -181,5 +177,55 @@ namespace BookingSystem.Data.User
             }
         }
 
+        //Login
+
+        public string FindOne(UserModel userModel)
+        {
+            List<UserModel> userList = new List<UserModel>();
+
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+                    string sqlQuery = "SELECT * FROM Users Where Email=@Email";
+                    SqlCommand command = new SqlCommand(sqlQuery, connection);
+                    command.Parameters.AddWithValue("@Email", userModel.Email);
+                    SqlDataReader reader = command.ExecuteReader();
+
+                    string password = "";
+                    string userPass = Hash.HashString(userModel.Password);
+                    string message = "";
+
+                    if (reader.HasRows)
+                    {
+                        while (reader.Read())
+                        {
+                            password = Convert.ToString(reader["Password"]);
+                        }
+                        if (password == userPass)
+                        {
+                            message = "Log in Success";
+                        }
+                        else
+                        {
+                            message = "Incorrect Password";
+                        }
+                    }
+                    else
+                    {
+                        message = "Email not found";
+                    }
+                    connection.Close();
+                    return message;
+                }
+            }
+            catch (Exception e)
+            {
+                System.Diagnostics.Debug.WriteLine(e);
+                return "Error";
+
+            }
+        }
     }
 }
