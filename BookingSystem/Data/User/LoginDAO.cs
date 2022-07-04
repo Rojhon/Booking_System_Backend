@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using BookingSystem.Models.Users;
 using System.Data.SqlClient;
+using BookingSystem.Helper;
 using System.Linq;
 using System.Web;
 
@@ -9,7 +10,7 @@ namespace BookingSystem.Data.User
 {
     public class LoginDAO
     {
-        private string connectionString = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=BookingSystemDatabase;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
+        private string connectionString = Constants.ConnectionString;
 
         public string UpdateOne(UserModel UserModel)
         {
