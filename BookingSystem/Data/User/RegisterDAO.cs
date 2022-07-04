@@ -20,6 +20,7 @@ namespace BookingSystem.Data.User
                 {
                     con.Open();
                     string sqlQuery = "INSERT INTO Users (UserNumber, FirstName, LastName, Position, Email, Password, CreatedAt) Values(@UserNumber, @FirstName, @LastName, @Position, @Email, @Password, GETDATE())";
+                    string password = Hash.HashString(UserModel.Password);
 
                     SqlCommand command = new SqlCommand(sqlQuery, con);
 
@@ -28,7 +29,7 @@ namespace BookingSystem.Data.User
                     command.Parameters.AddWithValue("@LastName", UserModel.LastName);
                     command.Parameters.AddWithValue("@Position", UserModel.Position);
                     command.Parameters.AddWithValue("@Email", UserModel.Email);
-                    command.Parameters.AddWithValue("@Password", UserModel.Password);
+                    command.Parameters.AddWithValue("@Password", password);
                     command.ExecuteNonQuery();
                     con.Close();
                 }
@@ -49,6 +50,7 @@ namespace BookingSystem.Data.User
                 {
                     con.Open();
                     string sqlQuery = "Update Requests Set UserNumber=@UserNumber, FirstName=@FirstName, LastName=@LastName, Position=@Position, Email=@Email, Password=@Password UpdatedAt=GETDATE() Where UserNumber=@UserNumber";
+                    string password = Hash.HashString(UserModel.Password);
 
                     SqlCommand command = new SqlCommand(sqlQuery, con);
 
@@ -57,7 +59,7 @@ namespace BookingSystem.Data.User
                     command.Parameters.AddWithValue("@LastName", UserModel.LastName);
                     command.Parameters.AddWithValue("@Position", UserModel.Position);
                     command.Parameters.AddWithValue("@Email", UserModel.Email);
-                    command.Parameters.AddWithValue("@Password", UserModel.Password);
+                    command.Parameters.AddWithValue("@Password", password);
                     command.ExecuteNonQuery();
                     con.Close();
                 }

@@ -76,5 +76,6 @@ namespace BookingSystem.Data.User
                 return userList;
             }
         }
+
     }
 }
