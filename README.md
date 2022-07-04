@@ -4,6 +4,7 @@ Don’t forget to include - https://localhost:44310/
 
 Paayus nalang...
 
+### Installation
 1. Clone the repo first clone this frontend and  second clone this backend to run then both locally in your devices
    ```sh
    https://github.com/Locality-PH/biology_frontend.git](https://github.com/user109436/URS_Booking_System.git
