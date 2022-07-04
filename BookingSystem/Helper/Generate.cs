@@ -16,5 +16,16 @@ namespace BookingSystem.Helper
                 .Select(s => s[random.Next(s.Length)]).ToArray());
         }
 
+        public static string Token()
+        {
+            int length = 100;
+
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            string token = new string(Enumerable.Repeat(chars, length)
+                .Select(s => s[random.Next(s.Length)]).ToArray());
+
+            return "Bearer " + token;
+        }
+
     }
 }

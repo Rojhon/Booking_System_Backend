@@ -7,6 +7,7 @@ using System.Web.Http;
 using System.Web.Http.Cors;
 using BookingSystem.Models.Offices;
 using BookingSystem.Data.Office;
+using System.Diagnostics;
 
 namespace BookingSystem.Controllers.Offices
 {
@@ -19,7 +20,7 @@ namespace BookingSystem.Controllers.Offices
         [HttpPost]
         public string CreateOffice([FromBody]OfficeModel body)
         {
-            return officeDAO.InsertOne(body);
+            return officeDAO.InsertOne(body, ModelState.IsValid);
         }
 
         [Route("api/office/{Id}")]
@@ -30,11 +31,12 @@ namespace BookingSystem.Controllers.Offices
         }
 
         [Route("api/office")]
-        [HttpPost]
+        [HttpPatch]
         public string UpdateOffice([FromBody] OfficeModel body)
         {
-            //System.Diagnostics.Debug.WriteLine(body);
-            return officeDAO.UpdateOne(body);
+            bool doesIdExist = (body.Id > 0);
+            if (!doesIdExist) ModelState.AddModelError("Id", "Data sent must have an Id");
+            return officeDAO.UpdateOne(body, ModelState.IsValid);
         }
 
         [Route("api/office/{Id}")]
