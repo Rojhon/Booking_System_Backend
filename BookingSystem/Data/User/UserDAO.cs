@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using BookingSystem.Models.Users;
+using BookingSystem.Models.Authentications;
 using System.Data.SqlClient;
 using BookingSystem.Helper;
+using System.Diagnostics;
 using System.Linq;
 using System.Web;
 
@@ -12,7 +14,7 @@ namespace BookingSystem.Data.User
     {
         private string connectionString = Constants.ConnectionString;
 
-        public string InsertOne(UserModel UserModel)
+        public string InsertOne(UserModel userModel)
         {
             try
             {
@@ -20,14 +22,14 @@ namespace BookingSystem.Data.User
                 {
                     con.Open();
                     string sqlQuery = "INSERT INTO Users (FirstName, LastName, RoleId, Email, Password) Values(@FirstName, @LastName, @RoleId, @Email, @Password)";
-                    string password = Hash.HashString(UserModel.Password);
+                    string password = Hash.HashString(userModel.Password);
 
                     SqlCommand command = new SqlCommand(sqlQuery, con);
 
-                    command.Parameters.AddWithValue("@FirstName", UserModel.FirstName);
-                    command.Parameters.AddWithValue("@LastName", UserModel.LastName);
-                    command.Parameters.AddWithValue("@RoleId", UserModel.RoleId);
-                    command.Parameters.AddWithValue("@Email", UserModel.Email);
+                    command.Parameters.AddWithValue("@FirstName", userModel.FirstName);
+                    command.Parameters.AddWithValue("@LastName", userModel.LastName);
+                    command.Parameters.AddWithValue("@RoleId", userModel.RoleId);
+                    command.Parameters.AddWithValue("@Email", userModel.Email);
                     command.Parameters.AddWithValue("@Password", password);
                     command.ExecuteNonQuery();
                     con.Close();
@@ -179,10 +181,8 @@ namespace BookingSystem.Data.User
 
         //Login
 
-        public string FindOne(UserModel userModel)
+        public string SignIn(UserModel userModel)
         {
-            List<UserModel> userList = new List<UserModel>();
-
             try
             {
                 using (SqlConnection connection = new SqlConnection(connectionString))
@@ -193,31 +193,57 @@ namespace BookingSystem.Data.User
                     command.Parameters.AddWithValue("@Email", userModel.Email);
                     SqlDataReader reader = command.ExecuteReader();
 
+                    int userId = 0;
+                    int roleId = 0;
                     string password = "";
                     string userPass = Hash.HashString(userModel.Password);
-                    string message = "";
+                    string response = "";
 
                     if (reader.HasRows)
                     {
                         while (reader.Read())
                         {
                             password = Convert.ToString(reader["Password"]);
+                            userId = Convert.ToInt32(reader["Id"]);
+                            roleId = Convert.ToInt32(reader["RoleId"]);
                         }
                         if (password == userPass)
                         {
-                            message = "Log in Success";
+                            // Credentials Valid
+                            AuthenticationModel authenticationModel = new AuthenticationModel();
+                            authenticationModel.Token = Generate.Token();
+                            authenticationModel.UserId = userId;
+                            authenticationModel.RoleId = roleId;
+
+                            // If user have already token, Delete the existing token and Generate a new one
+                            if (AuthManager.UserTokenExist(userId) && AuthManager.DeleteUserToken(userId))
+                            {
+                                Debug.WriteLine("User have already token, Delete the existing token and Generate a new one");
+                                return AuthManager.NewToken(authenticationModel);
+                            }
+                            // No token exist, Generate Token
+                            else if(!AuthManager.UserTokenExist(userId))
+                            {
+                                Debug.WriteLine("No token exist, Generate Token");
+                                return AuthManager.NewToken(authenticationModel);
+                            }
+                            else
+                            {
+                                Debug.WriteLine("User have already token, but failed to delete the token");
+                                return "Error";
+                            }
                         }
                         else
                         {
-                            message = "Incorrect Password";
+                            response = "Incorrect Password";
                         }
                     }
                     else
                     {
-                        message = "Email not found";
+                        response = "Email not found";
                     }
                     connection.Close();
-                    return message;
+                    return response;
                 }
             }
             catch (Exception e)
@@ -225,6 +251,29 @@ namespace BookingSystem.Data.User
                 System.Diagnostics.Debug.WriteLine(e);
                 return "Error";
 
+            }
+        }
+
+        public string SignOut(int userId)
+        {
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+                    string query = "Delete from Authentications Where UserId=@UserId";
+                    SqlCommand command = new SqlCommand(query, connection);
+                    command.Parameters.AddWithValue("@UserId", userId);
+                    command.ExecuteNonQuery();
+                    connection.Close();
+                }
+
+                return "Success";
+            }
+            catch (Exception e)
+            {
+                System.Diagnostics.Debug.WriteLine(e);
+                return "Error";
             }
         }
     }

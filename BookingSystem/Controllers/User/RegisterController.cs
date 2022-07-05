@@ -54,7 +54,14 @@ namespace BookingSystem.Controllers.User
         [HttpPost]
         public string Login([FromBody]UserModel body)
         {
-            return userDAO.FindOne(body);
+            return userDAO.SignIn(body);
+        }
+
+        [Route("api/user/logout/{userId}")]
+        [HttpPost]
+        public string Logout(int userId)
+        {
+            return userDAO.SignOut(userId);
         }
 
     }

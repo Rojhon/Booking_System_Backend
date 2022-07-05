@@ -11,5 +11,5 @@ DROP TABLE Offices;
 DROP TABLE Services;
 DROP TABLE Users;
 DROP TABLE Statuses;
-DROP TABLE Roles;
 DROP TABLE Authentications;
+DROP TABLE Roles;

@@ -14,7 +14,6 @@ namespace BookingSystem.Helper
 
         public static string NewToken(AuthenticationModel authenticationModel)
         {
-            //Delete existing token if already login
             try
             {
                 using (SqlConnection connection = new SqlConnection(connectionString))
@@ -30,12 +29,67 @@ namespace BookingSystem.Helper
                     connection.Close();
                 }
 
-                return "Success";
+                return "Success&" + authenticationModel.Token;
             }
             catch (Exception e)
             {
                 Debug.WriteLine(e);
                 return "Error";
+            }
+        }
+
+        public static bool UserTokenExist(int userId)
+        {
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    string sqlQuery = "SELECT * FROM Authentications Where UserId=@UserId";
+                    SqlCommand command = new SqlCommand(sqlQuery, connection);
+                    command.Parameters.AddWithValue("@UserId", userId);
+                    SqlDataReader reader = command.ExecuteReader();
+
+                    if (reader.HasRows)
+                    {
+                        connection.Close();
+                        return true;
+                    }
+                    else
+                    {
+                        connection.Close();
+                        return false;
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e);
+                return false;
+            }
+        }
+
+        public static bool DeleteUserToken(int userId)
+        {
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+                    string query = "Delete from Authentications Where UserId=@UserId";
+                    SqlCommand command = new SqlCommand(query, connection);
+                    command.Parameters.AddWithValue("@UserId", userId);
+                    command.ExecuteNonQuery();
+                    connection.Close();
+                }
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                System.Diagnostics.Debug.WriteLine(e);
+                return false;
             }
         }
 
