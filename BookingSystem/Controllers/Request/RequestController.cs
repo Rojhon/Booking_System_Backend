@@ -32,6 +32,7 @@ namespace BookingSystem.Controllers.Request
 
             //Debug.WriteLine("Forbidden");
             //return "Forbidden";
+
             return requestDAO.InsertOne(body, ModelState.IsValid);
         }
 
@@ -98,6 +99,66 @@ namespace BookingSystem.Controllers.Request
             Debug.WriteLine("Forbidden");
             return new List<RequestModel>();
             //return Request.CreateResponse(HttpStatusCode.Forbidden);
+        }
+
+        [Route("api/request/status/{statusId:int}")]
+        [HttpGet]
+        public List<RequestAggregatedToAllModel> GetRequestByStatus(int statusId)
+        {
+            string token = Convert.ToString(Request.Headers.Authorization);
+
+            if (AuthManager.VerifyToken(token))
+            {
+                return requestDAO.GetByStatus(statusId);
+            }
+
+            Debug.WriteLine("Forbidden");
+            return new List<RequestAggregatedToAllModel>();
+        }
+
+        [Route("api/request/office/{officeId:int}")]
+        [HttpGet]
+        public List<RequestAggregatedToAllModel> GetRequestByOffice(int officeId)
+        {
+            string token = Convert.ToString(Request.Headers.Authorization);
+
+            if (AuthManager.VerifyToken(token))
+            {
+                return requestDAO.GetByOffice(officeId);
+            }
+
+            Debug.WriteLine("Forbidden");
+            return new List<RequestAggregatedToAllModel>();
+        }
+
+        [Route("api/request/service/{serviceId:int}")]
+        [HttpGet]
+        public List<RequestAggregatedToAllModel> GetRequestByService(int serviceId)
+        {
+            string token = Convert.ToString(Request.Headers.Authorization);
+
+            if (AuthManager.VerifyToken(token))
+            {
+                return requestDAO.GetByService(serviceId);
+            }
+
+            Debug.WriteLine("Forbidden");
+            return new List<RequestAggregatedToAllModel>();
+        }
+
+        [Route("api/request/aggregated")]
+        [HttpGet]
+        public List<RequestAggregatedToAllModel> GetAllRequestAggregated()
+        {
+            string token = Convert.ToString(Request.Headers.Authorization);
+
+            if (AuthManager.VerifyToken(token))
+            {
+                return requestDAO.GetAllAggregated();
+            }
+
+            Debug.WriteLine("Forbidden");
+            return new List<RequestAggregatedToAllModel>();
         }
 
     }

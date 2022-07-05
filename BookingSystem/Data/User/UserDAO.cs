@@ -135,6 +135,7 @@ namespace BookingSystem.Data.User
                 return "Error";
             }
         }
+
         public List<UserModel> GetAll()
         {
             List<UserModel> returnList = new List<UserModel>();
@@ -160,6 +161,50 @@ namespace BookingSystem.Data.User
                             userModel.FirstName = Convert.ToString(reader["FirstName"]);
                             userModel.LastName = Convert.ToString(reader["LastName"]);
                             userModel.RoleId = Convert.ToInt32(reader["RoleId"]);
+                            userModel.Email = Convert.ToString(reader["Email"]);
+                            userModel.CreatedAt = Convert.ToDateTime(reader["CreatedAt"]);
+                            userModel.UpdatedAt = Convert.ToDateTime(reader["UpdatedAt"]);
+                            returnList.Add(userModel);
+                        }
+                    }
+
+                    con.Close();
+                }
+
+                return returnList;
+            }
+            catch (Exception e)
+            {
+                System.Diagnostics.Debug.WriteLine(e);
+                return returnList;
+            }
+        }
+
+        public List<UserAggregatedModel> GetAllAggregated()
+        {
+            List<UserAggregatedModel> returnList = new List<UserAggregatedModel>();
+
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    con.Open();
+                    string sqlQuery = "SELECT Users.Id,Users.FirstName, Users.LastName, Users.Email, Roles.Name as Role, Users.CreatedAt, Users.UpdatedAt FROM Users LEFT JOIN Roles ON Users.RoleId = Roles.Id ORDER BY Users.CreatedAt";
+
+                    SqlCommand command = new SqlCommand(sqlQuery, con);
+
+                    SqlDataReader reader = command.ExecuteReader();
+
+                    if (reader.HasRows)
+                    {
+                        while (reader.Read())
+                        {
+                            UserAggregatedModel userModel = new UserAggregatedModel();
+
+                            userModel.Id = Convert.ToInt32(reader["Id"]);
+                            userModel.FirstName = Convert.ToString(reader["FirstName"]);
+                            userModel.LastName = Convert.ToString(reader["LastName"]);
+                            userModel.Role = Convert.ToString(reader["Role"]);
                             userModel.Email = Convert.ToString(reader["Email"]);
                             userModel.CreatedAt = Convert.ToDateTime(reader["CreatedAt"]);
                             userModel.UpdatedAt = Convert.ToDateTime(reader["UpdatedAt"]);

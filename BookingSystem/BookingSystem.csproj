@@ -141,10 +141,12 @@
     <Compile Include="Helper\Validate.cs" />
     <Compile Include="Models\Authentications\AuthenticationModel.cs" />
     <Compile Include="Models\Offices\OfficeModel.cs" />
+    <Compile Include="Models\Requests\RequestAggregatedToAllModel].cs" />
     <Compile Include="Models\Requests\RequestModel.cs" />
     <Compile Include="Models\Requests\RequestStatusModel.cs" />
     <Compile Include="Models\Services\ServiceModel.cs" />
     <Compile Include="Models\Test\TestModel.cs" />
+    <Compile Include="Models\Users\UserAggregatedModel.cs" />
     <Compile Include="Models\Users\UserModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

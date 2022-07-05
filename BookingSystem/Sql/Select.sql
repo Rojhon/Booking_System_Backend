@@ -18,6 +18,7 @@ SELECT * FROM Requests ORDER BY TrackingId ASC, CreatedAt DESC;
 -- Get Join
 SELECT * FROM Requests LEFT JOIN Offices ON Requests.OfficeId = Offices.Id;
 SELECT Requests.Id, Requests.StatusId, Requests.UserNote, Requests.OfficeId, Offices.Name FROM Requests INNER JOIN Offices ON Requests.OfficeId = Offices.Id;
-SELECT Requests.Id, Requests.TrackingId, Requests.UserNote, Requests.OfficeNote, Requests.FileName, Offices.Name as Office, Statuses.Name as Status, Requests.CreatedAt, Requests.UpdatedAt FROM Requests INNER JOIN Statuses ON Requests.StatusId=Statuses.Id INNER JOIN Offices ON Requests.OfficeId=Offices.Id;
+SELECT Requests.Id, Requests.TrackingId, Requests.UserNote, Requests.OfficeNote, Requests.FileName, Offices.Name as Office, Services.Name as Service, Statuses.Name as Status, Requests.CreatedAt, Requests.UpdatedAt FROM Requests LEFT JOIN Statuses ON Requests.StatusId=Statuses.Id LEFT JOIN Offices ON Requests.OfficeId=Offices.Id LEFT JOIN  Services ON Requests.ServiceId=Services.Id ORDER BY Requests.CreatedAt;
 
+SELECT Users.Id,Users.FirstName, Users.LastName, Users.Email, Roles.Name as Role, Users.CreatedAt, Users.UpdatedAt FROM Users LEFT JOIN Roles ON Users.RoleId = Roles.Id ORDER BY Users.CreatedAt;
 SELECT Authentications.Id, Authentications.Token, Roles.Name FROM Authentications JOIN Roles ON Authentications.RoleId = Roles.Id WHERE Token = 'Bearer sjdjsgdjgsjgdsd';

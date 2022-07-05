@@ -34,6 +34,7 @@ namespace BookingSystem.Controllers.Offices
         [HttpPatch]
         public string UpdateOffice([FromBody] OfficeModel body)
         {
+
             bool doesIdExist = (body.Id > 0);
             if (!doesIdExist) ModelState.AddModelError("Id", "Data sent must have an Id");
             return officeDAO.UpdateOne(body, ModelState.IsValid);

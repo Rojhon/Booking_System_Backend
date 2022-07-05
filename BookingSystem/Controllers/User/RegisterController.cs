@@ -50,6 +50,13 @@ namespace BookingSystem.Controllers.User
             return userDAO.GetAll();
         }
 
+        [Route("api/user/aggregated")]
+        [HttpGet]
+        public List<UserAggregatedModel> GetAllAggregated()
+        {
+            return userDAO.GetAllAggregated();
+        }
+
         [Route("api/user/login")]
         [HttpPost]
         public string Login([FromBody]UserModel body)
