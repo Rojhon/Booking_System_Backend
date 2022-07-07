@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Linq;
+using System.Text;
 using System.Web;
 using BookingSystem.Models.Authentications;
+using Newtonsoft.Json;
 
 namespace BookingSystem.Helper
 {
@@ -12,7 +14,7 @@ namespace BookingSystem.Helper
     {
         private static string connectionString = Constants.ConnectionString;
 
-        public static string NewToken(AuthenticationModel authenticationModel)
+        public static string NewToken(AuthenticationModel authenticationModel, dynamic userData)
         {
             try
             {
@@ -29,7 +31,10 @@ namespace BookingSystem.Helper
                     connection.Close();
                 }
 
-                return "Success&" + authenticationModel.Token;
+                string objStringify = JsonConvert.SerializeObject(userData);
+                string accessToken = Convert.ToBase64String(Encoding.UTF8.GetBytes(objStringify));
+
+                return $"Success&{authenticationModel.Token}&{accessToken}";
             }
             catch (Exception e)
             {

@@ -7,6 +7,7 @@ using System.Web.Http;
 using System.Web.Http.Cors;
 using BookingSystem.Models.Users;
 using BookingSystem.Data.User;
+using BookingSystem.Helper;
 
 namespace BookingSystem.Controllers.User
 {
@@ -64,11 +65,18 @@ namespace BookingSystem.Controllers.User
             return userDAO.SignIn(body);
         }
 
-        [Route("api/user/logout/{userId}")]
+        [Route("api/user/logout")]
         [HttpPost]
-        public string Logout(int userId)
+        public dynamic Logout([FromBody] UserModel body)
         {
-            return userDAO.SignOut(userId);
+            string token = Convert.ToString(Request.Headers.Authorization);
+
+            if (AuthManager.VerifyToken(token))
+            {
+                return userDAO.SignOut(body);
+            }
+
+            return Request.CreateResponse(HttpStatusCode.Unauthorized);
         }
 
     }

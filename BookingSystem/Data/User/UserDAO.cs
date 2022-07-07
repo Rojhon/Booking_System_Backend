@@ -7,6 +7,7 @@ using BookingSystem.Helper;
 using System.Diagnostics;
 using System.Linq;
 using System.Web;
+using System.Dynamic;
 
 namespace BookingSystem.Data.User
 {
@@ -233,28 +234,42 @@ namespace BookingSystem.Data.User
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
                     connection.Open();
-                    string sqlQuery = "SELECT * FROM Users Where Email=@Email";
+                    string sqlQuery = "SELECT Users.Id as UserId, Users.FirstName, Users.LastName, Users.Email,Users.Password, Roles.Id as RoleId, Roles.Name as Role " +
+                        "FROM Users LEFT JOIN Roles " +
+                        "ON Users.RoleId = Roles.Id WHERE Users.Email = @Email";
+
                     SqlCommand command = new SqlCommand(sqlQuery, connection);
                     command.Parameters.AddWithValue("@Email", userModel.Email);
                     SqlDataReader reader = command.ExecuteReader();
 
-                    int userId = 0;
-                    int roleId = 0;
+                    string response = "";
+
+                    int userId = 0, roleId = 0;
                     string password = "";
                     string userPass = Hash.HashString(userModel.Password);
-                    string response = "";
+
+                    dynamic userData = new ExpandoObject();
 
                     if (reader.HasRows)
                     {
                         while (reader.Read())
                         {
                             password = Convert.ToString(reader["Password"]);
-                            userId = Convert.ToInt32(reader["Id"]);
+                            userId = Convert.ToInt32(reader["UserId"]);
                             roleId = Convert.ToInt32(reader["RoleId"]);
+
+                            userData.UserId = Convert.ToInt32(reader["UserId"]);
+                            userData.FirstName = Convert.ToString(reader["FirstName"]);
+                            userData.LastName = Convert.ToString(reader["LastName"]);
+                            userData.Email = Convert.ToString(reader["Email"]);
+                            userData.Role = Convert.ToString(reader["Role"]);
                         }
+
                         if (password == userPass)
                         {
                             // Credentials Valid
+                            userData.Authorized = true;
+
                             AuthenticationModel authenticationModel = new AuthenticationModel();
                             authenticationModel.Token = Generate.Token();
                             authenticationModel.UserId = userId;
@@ -264,13 +279,13 @@ namespace BookingSystem.Data.User
                             if (AuthManager.UserTokenExist(userId) && AuthManager.DeleteUserToken(userId))
                             {
                                 Debug.WriteLine("User have already token, Delete the existing token and Generate a new one");
-                                return AuthManager.NewToken(authenticationModel);
+                                return AuthManager.NewToken(authenticationModel, userData);
                             }
                             // No token exist, Generate Token
                             else if(!AuthManager.UserTokenExist(userId))
                             {
                                 Debug.WriteLine("No token exist, Generate Token");
-                                return AuthManager.NewToken(authenticationModel);
+                                return AuthManager.NewToken(authenticationModel, userData);
                             }
                             else
                             {
@@ -293,13 +308,13 @@ namespace BookingSystem.Data.User
             }
             catch (Exception e)
             {
-                System.Diagnostics.Debug.WriteLine(e);
+                Debug.WriteLine(e);
                 return "Error";
 
             }
         }
 
-        public string SignOut(int userId)
+        public string SignOut(UserModel userModel)
         {
             try
             {
@@ -308,7 +323,7 @@ namespace BookingSystem.Data.User
                     connection.Open();
                     string query = "Delete from Authentications Where UserId=@UserId";
                     SqlCommand command = new SqlCommand(query, connection);
-                    command.Parameters.AddWithValue("@UserId", userId);
+                    command.Parameters.AddWithValue("@UserId", userModel.Id);
                     command.ExecuteNonQuery();
                     connection.Close();
                 }
