@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using BookingSystem.Models.Services;
 using System.Data.SqlClient;
 using BookingSystem.Helper;
+using System.Dynamic;
 
 namespace BookingSystem.Data.Service
 {
@@ -39,9 +40,9 @@ namespace BookingSystem.Data.Service
             else return "The data sent are missing some field/s.";
         }
 
-        public List<ServiceModel> FindOne(string Id)
+        public dynamic FindOne(string Id)
         {
-            List<ServiceModel> officeList = new List<ServiceModel>();
+            dynamic serviceModel = new ExpandoObject();
 
             try
             {
@@ -57,25 +58,23 @@ namespace BookingSystem.Data.Service
                     {
                         while (reader.Read())
                         {
-                            ServiceModel serviceModel = new ServiceModel();
                             serviceModel.Id = Convert.ToInt32(reader["Id"]);
                             serviceModel.Name = Convert.ToString(reader["Name"]);
                             serviceModel.Fee = Convert.ToDecimal(reader["Fee"]);
                             serviceModel.CreatedAt = Convert.ToDateTime(reader["CreatedAt"]);
                             serviceModel.UpdatedAt = Convert.ToDateTime(reader["UpdatedAt"]);
-                            officeList.Add(serviceModel);
                         }
                     }
 
                     connection.Close();
                 }
 
-                return officeList;
+                return serviceModel;
             }
             catch (Exception e)
             {
                 System.Diagnostics.Debug.WriteLine(e);
-                return officeList;
+                return new { };
             }
         }
 

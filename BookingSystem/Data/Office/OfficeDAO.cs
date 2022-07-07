@@ -4,6 +4,7 @@ using BookingSystem.Models.Offices;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using BookingSystem.Helper;
+using System.Dynamic;
 
 namespace BookingSystem.Data.Office
 {
@@ -32,16 +33,16 @@ namespace BookingSystem.Data.Office
                 }
                 catch (Exception e)
                 {
-                    System.Diagnostics.Debug.WriteLine(e);
+                    Debug.WriteLine(e);
                     return "Error";
                 }
             }
             else return "The data sent are missing some field/s.";
         }
 
-        public List<OfficeModel> FindOne(string Id)
+        public dynamic FindOne(string Id)
         {
-            List<OfficeModel> officeList = new List<OfficeModel>();
+            dynamic officeModel = new ExpandoObject();
 
             try
             {
@@ -57,24 +58,23 @@ namespace BookingSystem.Data.Office
                     {
                         while (reader.Read())
                         {
-                            OfficeModel officeModel = new OfficeModel();
                             officeModel.Id = Convert.ToInt32(reader["Id"]);
                             officeModel.Name = Convert.ToString(reader["Name"]);
                             officeModel.CreatedAt = Convert.ToDateTime(reader["CreatedAt"]);
                             officeModel.UpdatedAt = Convert.ToDateTime(reader["UpdatedAt"]);
-                            officeList.Add(officeModel);
+
                         }
                     }
 
                     connection.Close();
                 }
 
-                return officeList;
+                return officeModel;
             }
             catch (Exception e)
             {
-                System.Diagnostics.Debug.WriteLine(e);
-                return officeList;
+                Debug.WriteLine(e);
+                return new { };
             }
         }
 

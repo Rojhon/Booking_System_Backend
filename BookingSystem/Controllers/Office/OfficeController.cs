@@ -25,7 +25,7 @@ namespace BookingSystem.Controllers.Offices
 
         [Route("api/office/{Id}")]
         [HttpGet]
-        public List<OfficeModel> GetOffice(string Id)
+        public dynamic GetOffice(string Id)
         {
             return officeDAO.FindOne(Id);
         }

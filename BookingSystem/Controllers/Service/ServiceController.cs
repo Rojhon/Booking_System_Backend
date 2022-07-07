@@ -24,7 +24,7 @@ namespace BookingSystem.Controllers.Service
 
         [Route("api/service/{Id}")]
         [HttpGet]
-        public List<ServiceModel> GetOffice(string Id)
+        public dynamic GetOffice(string Id)
         {
             return serviceDAO.FindOne(Id);
         }

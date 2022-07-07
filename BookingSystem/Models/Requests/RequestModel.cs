@@ -16,7 +16,6 @@ namespace BookingSystem.Models.Requests
         [Required]
         public int ServiceId { get; set; }
         public int StatusId { get; set; }
-        [Required]
         public string UserNote { get; set; }
         public string OfficeNote { get; set; }
         [Required]

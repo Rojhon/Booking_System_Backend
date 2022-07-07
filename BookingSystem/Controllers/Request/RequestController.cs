@@ -23,32 +23,13 @@ namespace BookingSystem.Controllers.Request
         [HttpPost]
         public string CreateRequest([FromBody]RequestModel body)
         {
-            //string token = Convert.ToString(Request.Headers.Authorization);
-
-            //if (AuthManager.VerifyToken(token) && AuthManager.VerifyRole(token))
-            //{
-            //    return requestDAO.InsertOne(body, ModelState.IsValid);
-            //}
-
-            //Debug.WriteLine("Forbidden");
-            //return "Forbidden";
-
             return requestDAO.InsertOne(body, ModelState.IsValid);
         }
 
         [Route("api/request/{trackingId}")]
         [HttpGet]
-        public List<RequestModel> GetRequest(string trackingId)
+        public dynamic GetRequest(string trackingId)
         {
-            //string token = Convert.ToString(Request.Headers.Authorization);
-
-            //if (AuthManager.VerifyToken(token))
-            //{
-            //    return requestDAO.FindOne(trackingId);
-            //}
-
-            //Debug.WriteLine("Forbidden");
-            //return new List<RequestModel>();
             return requestDAO.FindOne(trackingId);
         }
 
@@ -87,7 +68,7 @@ namespace BookingSystem.Controllers.Request
 
         [Route("api/request")]
         [HttpGet]
-        public List<RequestModel> GetAll()
+        public dynamic GetAll()
         {
             string token = Convert.ToString(Request.Headers.Authorization);
 
@@ -96,9 +77,8 @@ namespace BookingSystem.Controllers.Request
                 return requestDAO.GetAll();
             }
 
-            Debug.WriteLine("Forbidden");
-            return new List<RequestModel>();
-            //return Request.CreateResponse(HttpStatusCode.Forbidden);
+            Debug.WriteLine("Unauthorized");
+            return Request.CreateResponse(HttpStatusCode.Unauthorized);
         }
 
         [Route("api/request/status/{statusId:int}")]

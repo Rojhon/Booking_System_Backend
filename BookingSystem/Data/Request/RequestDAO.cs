@@ -8,6 +8,7 @@ using System.Diagnostics;
 using BookingSystem.Helper;
 using System.IO;
 using System.Web;
+using System.Dynamic;
 
 namespace BookingSystem.Data.Request
 {
@@ -76,19 +77,11 @@ namespace BookingSystem.Data.Request
             else return "The data sent are missing some field/s.";
         }
 
-        public List<RequestModel> FindOne(string trackingId)
+        public dynamic FindOne(string trackingId)
         {
-            List<RequestModel> requestList = new List<RequestModel>();
             try
             {
-                var fileName = $"{trackingId}.pdf";
-                var filePath = Path.Combine(path, fileName);
-                Byte[] fileByte = File.ReadAllBytes(filePath);
-                var fileBase64 = Convert.ToBase64String(fileByte);
-
-                Debug.WriteLine(fileByte);
-                Debug.WriteLine(fileBase64);
-
+                dynamic requestModel = new ExpandoObject();
 
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
@@ -102,7 +95,6 @@ namespace BookingSystem.Data.Request
                     {
                         while (reader.Read())
                         {
-                            RequestModel requestModel = new RequestModel();
                             requestModel.Id = Convert.ToInt32(reader["Id"]);
                             requestModel.TrackingId = Convert.ToString(reader["TrackingId"]);
                             requestModel.OfficeId = Convert.ToInt32(reader["OfficeId"]);
@@ -110,26 +102,34 @@ namespace BookingSystem.Data.Request
                             requestModel.StatusId = Convert.ToInt32(reader["StatusId"]);
                             requestModel.UserNote = Convert.ToString(reader["UserNote"]);
                             requestModel.OfficeNote = Convert.ToString(reader["OfficeNote"]);
-                            requestModel.FileData = Convert.ToString(fileBase64);
+                            //requestModel.FileData = Convert.ToString(fileBase64);
                             requestModel.FileName = Convert.ToString(reader["FileName"]);
                             requestModel.CreatedAt = Convert.ToDateTime(reader["CreatedAt"]);
                             requestModel.UpdatedAt = Convert.ToDateTime(reader["UpdatedAt"]);
                             requestModel.FinishedAt = Validate.Date(reader, "FinishedAt");
-                            requestList.Add(requestModel);
                         }
                     }
 
                     connection.Close();
                 }
 
-                return requestList;
+                return requestModel;
             }
             catch (Exception e)
             {
                 Debug.WriteLine(e);
-                return requestList;
+                return new { };
             }
         }
+
+        //This is for future function getFile
+        //var fileName = $"{trackingId}.pdf";
+        //var filePath = Path.Combine(path, fileName);
+        //Byte[] fileByte = File.ReadAllBytes(filePath);
+        //var fileBase64 = Convert.ToBase64String(fileByte);
+
+        //Debug.WriteLine(fileByte);
+        //Debug.WriteLine(fileBase64);
 
         public string UpdateOne(RequestModel requestModel, bool isModelValidate)
         {
