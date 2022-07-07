@@ -40,50 +40,55 @@ namespace BookingSystem.Data.User
             }
             catch (Exception e)
             {
-                System.Diagnostics.Debug.WriteLine(e);
+                Debug.WriteLine(e);
                 return "Error";
             }
         }
-        public string UpdateOne(UserModel UserModel)
+
+        public string UpdateOne(UserModel userModel)
         {
             try
             {
-                using (SqlConnection con = new SqlConnection(connectionString))
+                using (SqlConnection connection = new SqlConnection(connectionString))
                 {
-                    con.Open();
-                    string sqlQuery = "Update Requests Set FirstName=@FirstName, LastName=@LastName, RoleId=@RoleId, Email=@Email, Password=@Password UpdatedAt=GETDATE() Where Id=@Id";
-                    string password = Hash.HashString(UserModel.Password);
+                    connection.Open();
+                    string password = Hash.HashString(userModel.Password);
+                    string query = "Update Users Set FirstName=@FirstName, LastName=@LastName, RoleId=@RoleId, Email=@Email, Password=@Password, UpdatedAt=GETDATE() Where Id=@Id";
+                    SqlCommand command = new SqlCommand(query, connection);
 
-                    SqlCommand command = new SqlCommand(sqlQuery, con);
-
-                    command.Parameters.AddWithValue("@FirstName", UserModel.FirstName);
-                    command.Parameters.AddWithValue("@LastName", UserModel.LastName);
-                    command.Parameters.AddWithValue("@RoleId", UserModel.RoleId);
-                    command.Parameters.AddWithValue("@Email", UserModel.Email);
+                    command.Parameters.AddWithValue("@FirstName", userModel.FirstName);
+                    command.Parameters.AddWithValue("@LastName", userModel.LastName);
+                    command.Parameters.AddWithValue("@RoleId", userModel.RoleId);
+                    command.Parameters.AddWithValue("@Email", userModel.Email);
                     command.Parameters.AddWithValue("@Password", password);
+                    command.Parameters.AddWithValue("@Id", userModel.Id);
                     command.ExecuteNonQuery();
-                    con.Close();
+                    connection.Close();
                 }
 
-                    return "Updated";
+                return "Updated";
             }
             catch (Exception e)
             {
-                System.Diagnostics.Debug.WriteLine(e);
+                Debug.WriteLine(e);
                 return "Error";
             }
-        }
-        public List<UserModel> FindOne(string Id)
-        {
-            List<UserModel> userList = new List<UserModel>();
 
+        }
+
+        public dynamic FindOne(int Id)
+        {
             try
             {
+                dynamic userModel = new ExpandoObject();
+
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     con.Open();
-                    string sqlQuery = "SELECT * FROM Users Where Id=@Id";
+                    string sqlQuery = "SELECT Users.Id,Users.FirstName, Users.LastName, Users.Email, Roles.Name as Role, Users.CreatedAt, Users.UpdatedAt FROM Users LEFT JOIN Roles ON Users.RoleId = Roles.Id WHERE Users.Id=@Id ORDER BY Users.CreatedAt";
+
                     SqlCommand command = new SqlCommand(sqlQuery, con);
+                    Debug.WriteLine(Id);
                     command.Parameters.AddWithValue("@Id", Id);
                     SqlDataReader reader = command.ExecuteReader();
 
@@ -91,27 +96,25 @@ namespace BookingSystem.Data.User
                     {
                         while (reader.Read())
                         {
-                            UserModel userModel = new UserModel();
                             userModel.Id = Convert.ToInt32(reader["Id"]);
                             userModel.FirstName = Convert.ToString(reader["FirstName"]);
                             userModel.LastName = Convert.ToString(reader["LastName"]);
-                            userModel.RoleId = Convert.ToInt32(reader["RoleId"]);
+                            userModel.Role = Convert.ToString(reader["Role"]);
                             userModel.Email = Convert.ToString(reader["Email"]);
                             userModel.CreatedAt = Convert.ToDateTime(reader["CreatedAt"]);
                             userModel.UpdatedAt = Convert.ToDateTime(reader["UpdatedAt"]);
-                            userList.Add(userModel);
                         }
                     }
 
                     con.Close();
                 }
 
-                return userList;
+                return userModel;
             }
             catch (Exception e)
             {
-                System.Diagnostics.Debug.WriteLine(e);
-                return userList;
+                Debug.WriteLine(e);
+                return new { };
             }
         }
         public string DeleteOne(string Id)
@@ -132,7 +135,7 @@ namespace BookingSystem.Data.User
             }
             catch (Exception e)
             {
-                System.Diagnostics.Debug.WriteLine(e);
+                Debug.WriteLine(e);
                 return "Error";
             }
         }
@@ -176,7 +179,7 @@ namespace BookingSystem.Data.User
             }
             catch (Exception e)
             {
-                System.Diagnostics.Debug.WriteLine(e);
+                Debug.WriteLine(e);
                 return returnList;
             }
         }
@@ -220,7 +223,7 @@ namespace BookingSystem.Data.User
             }
             catch (Exception e)
             {
-                System.Diagnostics.Debug.WriteLine(e);
+                Debug.WriteLine(e);
                 return returnList;
             }
         }
@@ -332,7 +335,7 @@ namespace BookingSystem.Data.User
             }
             catch (Exception e)
             {
-                System.Diagnostics.Debug.WriteLine(e);
+                Debug.WriteLine(e);
                 return "Error";
             }
         }

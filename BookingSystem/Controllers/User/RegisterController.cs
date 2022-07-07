@@ -25,7 +25,7 @@ namespace BookingSystem.Controllers.User
 
         [Route("api/user/{Id}")]
         [HttpGet]
-        public List<UserModel> GetUser(string Id)
+        public dynamic GetUser(int Id)
         {
             return userDAO.FindOne(Id);
         }

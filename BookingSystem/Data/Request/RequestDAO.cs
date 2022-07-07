@@ -49,7 +49,7 @@ namespace BookingSystem.Data.Request
                     using (SqlConnection connection = new SqlConnection(connectionString))
                     {
                         connection.Open();
-                        string sqlQuery = "INSERT INTO Requests (TrackingId, OfficeId, ServiceId, UserNote, FileName, FilePath) Values(@TrackingId, @OfficeId, @ServiceId, @UserNote, @FileName, @FilePath)";
+                        string sqlQuery = "INSERT INTO Requests (TrackingId, OfficeId, ServiceId, UserNote, FileName, FilePath, FileSize, FileExtension) Values(@TrackingId, @OfficeId, @ServiceId, @UserNote, @FileName, @FilePath, @FileSize, @FileExtension)";
 
                         SqlCommand command = new SqlCommand(sqlQuery, connection);
 
@@ -59,6 +59,8 @@ namespace BookingSystem.Data.Request
                         command.Parameters.AddWithValue("@UserNote", requestModel.UserNote);
                         command.Parameters.AddWithValue("@FileName", fileName);
                         command.Parameters.AddWithValue("@FilePath", filePath);
+                        command.Parameters.AddWithValue("@FileSize", requestModel.FileSize);
+                        command.Parameters.AddWithValue("@FileExtension", requestModel.FileExtension);
                         command.ExecuteNonQuery();
                         connection.Close();
                     }
@@ -86,7 +88,13 @@ namespace BookingSystem.Data.Request
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
                     connection.Open();
-                    string sqlQuery = "SELECT * FROM Requests Where TrackingId=@TrackingId";
+                    string sqlQuery = "SELECT Requests.Id, Requests.TrackingId, Requests.UserNote, Requests.OfficeNote, Requests.FileName, Requests.FileSize, Requests.FileExtension, Offices.Name as Office, Services.Name as Service, Statuses.Name as Status, Requests.CreatedAt, Requests.UpdatedAt, Requests.FinishedAt " +
+                        "FROM Requests LEFT JOIN Statuses ON Requests.StatusId=Statuses.Id " +
+                        "LEFT JOIN Offices ON Requests.OfficeId=Offices.Id " +
+                        "LEFT JOIN  Services ON Requests.ServiceId=Services.Id " +
+                        "WHERE TrackingId=@TrackingId " +
+                        "ORDER BY Requests.CreatedAt";
+
                     SqlCommand command = new SqlCommand(sqlQuery, connection);
                     command.Parameters.AddWithValue("@TrackingId", trackingId);
                     SqlDataReader reader = command.ExecuteReader();
@@ -97,13 +105,15 @@ namespace BookingSystem.Data.Request
                         {
                             requestModel.Id = Convert.ToInt32(reader["Id"]);
                             requestModel.TrackingId = Convert.ToString(reader["TrackingId"]);
-                            requestModel.OfficeId = Convert.ToInt32(reader["OfficeId"]);
-                            requestModel.ServiceId = Convert.ToInt32(reader["ServiceId"]);
-                            requestModel.StatusId = Convert.ToInt32(reader["StatusId"]);
+                            requestModel.Office = Convert.ToString(reader["Office"]);
+                            requestModel.Service = Convert.ToString(reader["Service"]);
+                            requestModel.Status = Convert.ToString(reader["Status"]);
                             requestModel.UserNote = Convert.ToString(reader["UserNote"]);
                             requestModel.OfficeNote = Convert.ToString(reader["OfficeNote"]);
                             //requestModel.FileData = Convert.ToString(fileBase64);
                             requestModel.FileName = Convert.ToString(reader["FileName"]);
+                            requestModel.FileSize = Convert.ToUInt64(reader["FileSize"]);
+                            requestModel.FileExtension = Convert.ToString(reader["FileExtension"]);
                             requestModel.CreatedAt = Convert.ToDateTime(reader["CreatedAt"]);
                             requestModel.UpdatedAt = Convert.ToDateTime(reader["UpdatedAt"]);
                             requestModel.FinishedAt = Validate.Date(reader, "FinishedAt");
@@ -197,7 +207,7 @@ namespace BookingSystem.Data.Request
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
                     connection.Open();
-                    string sqlQuery = "SELECT Requests.Id, Requests.TrackingId, Requests.UserNote, Requests.OfficeNote, Requests.FileName, Offices.Name as Office, Services.Name as Service, Statuses.Name as Status, Requests.CreatedAt, Requests.UpdatedAt, Requests.FinishedAt " +
+                    string sqlQuery = "SELECT Requests.Id, Requests.TrackingId, Requests.UserNote, Requests.OfficeNote, Requests.FileName, Requests.FileSize, Requests.FileExtension, Offices.Name as Office, Services.Name as Service, Statuses.Name as Status, Requests.CreatedAt, Requests.UpdatedAt, Requests.FinishedAt " +
                         "FROM Requests LEFT JOIN Statuses ON Requests.StatusId=Statuses.Id " +
                         "LEFT JOIN Offices ON Requests.OfficeId=Offices.Id " +
                         "LEFT JOIN  Services ON Requests.ServiceId=Services.Id " +
@@ -222,6 +232,8 @@ namespace BookingSystem.Data.Request
                             requestModel.OfficeNote = Convert.ToString(reader["OfficeNote"]);
                             //requestModel.FileData = Convert.ToString(reader["FileData"]);
                             requestModel.FileName = Convert.ToString(reader["FileName"]);
+                            requestModel.FileSize = Convert.ToInt32(reader["FileSize"]);
+                            requestModel.FileExtension = Convert.ToString(reader["FileExtension"]);
                             requestModel.CreatedAt = Convert.ToDateTime(reader["CreatedAt"]);
                             requestModel.UpdatedAt = Convert.ToDateTime(reader["UpdatedAt"]);
                             requestModel.FinishedAt = Validate.Date(reader, "FinishedAt");
@@ -250,7 +262,7 @@ namespace BookingSystem.Data.Request
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
                     connection.Open();
-                    string sqlQuery = "SELECT Requests.Id, Requests.TrackingId, Requests.UserNote, Requests.OfficeNote, Requests.FileName, Offices.Name as Office, Services.Name as Service, Statuses.Name as Status, Requests.CreatedAt, Requests.UpdatedAt, Requests.FinishedAt " +
+                    string sqlQuery = "SELECT Requests.Id, Requests.TrackingId, Requests.UserNote, Requests.OfficeNote, Requests.FileName, Requests.FileSize, Requests.FileExtension, Offices.Name as Office, Services.Name as Service, Statuses.Name as Status, Requests.CreatedAt, Requests.UpdatedAt, Requests.FinishedAt " +
                     "FROM Requests LEFT JOIN Statuses ON Requests.StatusId=Statuses.Id " +
                     "LEFT JOIN Offices ON Requests.OfficeId=Offices.Id " +
                     "LEFT JOIN  Services ON Requests.ServiceId=Services.Id " +
@@ -276,6 +288,8 @@ namespace BookingSystem.Data.Request
                             requestModel.OfficeNote = Convert.ToString(reader["OfficeNote"]);
                             //requestModel.FileData = Convert.ToString(reader["FileData"]);
                             requestModel.FileName = Convert.ToString(reader["FileName"]);
+                            requestModel.FileSize = Convert.ToInt32(reader["FileSize"]);
+                            requestModel.FileExtension = Convert.ToString(reader["FileExtension"]);
                             requestModel.CreatedAt = Convert.ToDateTime(reader["CreatedAt"]);
                             requestModel.UpdatedAt = Convert.ToDateTime(reader["UpdatedAt"]);
                             requestModel.FinishedAt = Validate.Date(reader, "FinishedAt");
@@ -304,7 +318,7 @@ namespace BookingSystem.Data.Request
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
                     connection.Open();
-                    string sqlQuery = "SELECT Requests.Id, Requests.TrackingId, Requests.UserNote, Requests.OfficeNote, Requests.FileName, Offices.Name as Office, Services.Name as Service, Statuses.Name as Status, Requests.CreatedAt, Requests.UpdatedAt, Requests.FinishedAt " +
+                    string sqlQuery = "SELECT Requests.Id, Requests.TrackingId, Requests.UserNote, Requests.OfficeNote, Requests.FileName, Requests.FileSize, Requests.FileExtension, Offices.Name as Office, Services.Name as Service, Statuses.Name as Status, Requests.CreatedAt, Requests.UpdatedAt, Requests.FinishedAt " +
                     "FROM Requests LEFT JOIN Statuses ON Requests.StatusId=Statuses.Id " +
                     "LEFT JOIN Offices ON Requests.OfficeId=Offices.Id " +
                     "LEFT JOIN  Services ON Requests.ServiceId=Services.Id " +
@@ -329,6 +343,8 @@ namespace BookingSystem.Data.Request
                             requestModel.OfficeNote = Convert.ToString(reader["OfficeNote"]);
                             //requestModel.FileData = Convert.ToString(reader["FileData"]);
                             requestModel.FileName = Convert.ToString(reader["FileName"]);
+                            requestModel.FileSize = Convert.ToInt32(reader["FileSize"]);
+                            requestModel.FileExtension = Convert.ToString(reader["FileExtension"]);
                             requestModel.CreatedAt = Convert.ToDateTime(reader["CreatedAt"]);
                             requestModel.UpdatedAt = Convert.ToDateTime(reader["UpdatedAt"]);
                             requestModel.FinishedAt = Validate.Date(reader, "FinishedAt");
@@ -357,7 +373,7 @@ namespace BookingSystem.Data.Request
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
                     connection.Open();
-                    string sqlQuery = "SELECT Requests.Id, Requests.TrackingId, Requests.UserNote, Requests.OfficeNote, Requests.FileName, Offices.Name as Office, Services.Name as Service, Statuses.Name as Status, Requests.CreatedAt, Requests.UpdatedAt, Requests.FinishedAt " +
+                    string sqlQuery = "SELECT Requests.Id, Requests.TrackingId, Requests.UserNote, Requests.OfficeNote, Requests.FileName, Requests.FileSize, Requests.FileExtension, Offices.Name as Office, Services.Name as Service, Statuses.Name as Status, Requests.CreatedAt, Requests.UpdatedAt, Requests.FinishedAt " +
                     "FROM Requests LEFT JOIN Statuses ON Requests.StatusId=Statuses.Id " +
                     "LEFT JOIN Offices ON Requests.OfficeId=Offices.Id " +
                     "LEFT JOIN  Services ON Requests.ServiceId=Services.Id " +
@@ -382,6 +398,8 @@ namespace BookingSystem.Data.Request
                             requestModel.OfficeNote = Convert.ToString(reader["OfficeNote"]);
                             //requestModel.FileData = Convert.ToString(reader["FileData"]);
                             requestModel.FileName = Convert.ToString(reader["FileName"]);
+                            requestModel.FileSize = Convert.ToInt32(reader["FileSize"]);
+                            requestModel.FileExtension = Convert.ToString(reader["FileExtension"]);
                             requestModel.CreatedAt = Convert.ToDateTime(reader["CreatedAt"]);
                             requestModel.UpdatedAt = Convert.ToDateTime(reader["UpdatedAt"]);
                             requestModel.FinishedAt = Validate.Date(reader, "FinishedAt");
@@ -431,6 +449,8 @@ namespace BookingSystem.Data.Request
                             requestModel.OfficeNote = Convert.ToString(reader["OfficeNote"]);
                             //requestModel.FileData = Convert.ToString(reader["FileData"]);
                             requestModel.FileName = Convert.ToString(reader["FileName"]);
+                            requestModel.FileSize = Convert.ToInt32(reader["FileSize"]);
+                            requestModel.FileExtension = Convert.ToString(reader["FileExtension"]);
                             requestModel.CreatedAt = Convert.ToDateTime(reader["CreatedAt"]);
                             requestModel.UpdatedAt = Convert.ToDateTime(reader["UpdatedAt"]);
                             requestModel.FinishedAt = Validate.Date(reader, "FinishedAt");

@@ -33,23 +33,25 @@ namespace BookingSystem.Controllers.Request
             return requestDAO.FindOne(trackingId);
         }
 
-        [Route("api/request")]
-        [HttpPatch]
-        public string UpdateRequest([FromBody] RequestModel body)
-        {
-            string token = Convert.ToString(Request.Headers.Authorization);
-            bool doesIdExist = (body.Id > 0);
+        //Request Patch is outdated so i commented it for now
 
-            if (!doesIdExist) ModelState.AddModelError("Id", "Data sent must have an Id");
+        //[Route("api/request")]
+        //[HttpPatch]
+        //public string UpdateRequest([FromBody] RequestModel body)
+        //{
+        //    string token = Convert.ToString(Request.Headers.Authorization);
+        //    bool doesIdExist = (body.Id > 0);
 
-            if (AuthManager.VerifyToken(token) && AuthManager.VerifyRole(token))
-            {
-                return requestDAO.UpdateOne(body, ModelState.IsValid);
-            }
+        //    if (!doesIdExist) ModelState.AddModelError("Id", "Data sent must have an Id");
 
-            Debug.WriteLine("Forbidden");
-            return "Forbidden";
-        }
+        //    if (AuthManager.VerifyToken(token) && AuthManager.VerifyRole(token))
+        //    {
+        //        return requestDAO.UpdateOne(body, ModelState.IsValid);
+        //    }
+
+        //    Debug.WriteLine("Forbidden");
+        //    return "Forbidden";
+        //}
 
         [Route("api/request/{trackingId}")]
         [HttpDelete]

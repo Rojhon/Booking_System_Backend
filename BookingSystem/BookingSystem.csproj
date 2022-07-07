@@ -144,6 +144,7 @@
     <Compile Include="Models\Requests\RequestAggregatedToAllModel].cs" />
     <Compile Include="Models\Requests\RequestModel.cs" />
     <Compile Include="Models\Requests\RequestStatusModel.cs" />
+    <Compile Include="Models\Requests\RequestUpdateModel.cs" />
     <Compile Include="Models\Services\ServiceModel.cs" />
     <Compile Include="Models\Test\TestModel.cs" />
     <Compile Include="Models\Users\UserAggregatedModel.cs" />
