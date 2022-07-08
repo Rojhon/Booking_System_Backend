@@ -30,28 +30,38 @@ namespace BookingSystem.Controllers.Request
         [HttpGet]
         public dynamic GetRequest(string trackingId)
         {
-            return requestDAO.FindOne(trackingId);
+            bool isAggregated = false;
+            return requestDAO.FindOne(trackingId, isAggregated);
+        }
+
+        [Route("api/request-aggregated/{trackingId}")]
+        [HttpGet]
+
+        public dynamic GetRequestAggregated(string trackingId)
+        {
+            bool isAggregated = true;
+            return requestDAO.FindOne(trackingId, isAggregated);
         }
 
         //Request Patch is outdated so i commented it for now
 
-        //[Route("api/request")]
-        //[HttpPatch]
-        //public string UpdateRequest([FromBody] RequestModel body)
-        //{
-        //    string token = Convert.ToString(Request.Headers.Authorization);
-        //    bool doesIdExist = (body.Id > 0);
+        [Route("api/request")]
+        [HttpPatch]
+        public string UpdateRequest([FromBody] RequestUpdateModel body)
+        {
+            string token = Convert.ToString(Request.Headers.Authorization);
+            bool doesIdExist = (body.Id > 0);
 
-        //    if (!doesIdExist) ModelState.AddModelError("Id", "Data sent must have an Id");
+            if (!doesIdExist) ModelState.AddModelError("Id", "Data sent must have an Id");
 
-        //    if (AuthManager.VerifyToken(token) && AuthManager.VerifyRole(token))
-        //    {
-        //        return requestDAO.UpdateOne(body, ModelState.IsValid);
-        //    }
+            if (AuthManager.VerifyToken(token) && AuthManager.VerifyRole(token))
+            {
+                return requestDAO.UpdateOne(body, ModelState.IsValid);
+            }
 
-        //    Debug.WriteLine("Forbidden");
-        //    return "Forbidden";
-        //}
+            Debug.WriteLine("Forbidden");
+            return "Forbidden";
+        }
 
         [Route("api/request/{trackingId}")]
         [HttpDelete]
@@ -76,67 +86,121 @@ namespace BookingSystem.Controllers.Request
 
             if (AuthManager.VerifyToken(token))
             {
-                return requestDAO.GetAll();
+                bool isAggregated = false;
+                return requestDAO.GetAll(isAggregated);
             }
 
             Debug.WriteLine("Unauthorized");
             return Request.CreateResponse(HttpStatusCode.Unauthorized);
         }
 
-        [Route("api/request/status/{statusId:int}")]
+        [Route("api/request-aggregated")]
         [HttpGet]
-        public List<RequestAggregatedToAllModel> GetRequestByStatus(int statusId)
+        public dynamic GetAllRequestAggregated()
         {
             string token = Convert.ToString(Request.Headers.Authorization);
 
             if (AuthManager.VerifyToken(token))
             {
-                return requestDAO.GetByStatus(statusId);
+                bool isAggregated = true;
+                return requestDAO.GetAll(isAggregated);
             }
 
             Debug.WriteLine("Forbidden");
             return new List<RequestAggregatedToAllModel>();
         }
 
-        [Route("api/request/office/{officeId:int}")]
+        [Route("api/all-request/status/{statusId:int}")]
         [HttpGet]
-        public List<RequestAggregatedToAllModel> GetRequestByOffice(int officeId)
+        public dynamic GetAllRequestByStatus(int statusId)
         {
             string token = Convert.ToString(Request.Headers.Authorization);
 
             if (AuthManager.VerifyToken(token))
             {
-                return requestDAO.GetByOffice(officeId);
+                bool isAggregated = false;
+                return requestDAO.GetByStatus(statusId, isAggregated);
             }
 
             Debug.WriteLine("Forbidden");
             return new List<RequestAggregatedToAllModel>();
         }
 
-        [Route("api/request/service/{serviceId:int}")]
+        [Route("api/all-request-aggregated/status/{statusId:int}")]
         [HttpGet]
-        public List<RequestAggregatedToAllModel> GetRequestByService(int serviceId)
+        public dynamic GetAllRequestAggregatedByStatus(int statusId)
         {
             string token = Convert.ToString(Request.Headers.Authorization);
 
             if (AuthManager.VerifyToken(token))
             {
-                return requestDAO.GetByService(serviceId);
+                bool isAggregated = true;
+                return requestDAO.GetByStatus(statusId, isAggregated);
             }
 
             Debug.WriteLine("Forbidden");
             return new List<RequestAggregatedToAllModel>();
         }
 
-        [Route("api/request/aggregated")]
+        [Route("api/all-request/office/{officeId:int}")]
         [HttpGet]
-        public List<RequestAggregatedToAllModel> GetAllRequestAggregated()
+        public dynamic GetAllRequestByOffice(int officeId)
         {
             string token = Convert.ToString(Request.Headers.Authorization);
 
             if (AuthManager.VerifyToken(token))
             {
-                return requestDAO.GetAllAggregated();
+                Debug.WriteLine(officeId);
+                bool isAggregated = false;
+                return requestDAO.GetByOffice(officeId, isAggregated);
+            }
+
+            Debug.WriteLine("Forbidden");
+            return new List<RequestAggregatedToAllModel>();
+        }
+
+        [Route("api/all-request-aggregated/office/{officeId:int}")]
+        [HttpGet]
+        public dynamic GetAllRequestAggregatedByOffice(int officeId)
+        {
+            string token = Convert.ToString(Request.Headers.Authorization);
+
+            if (AuthManager.VerifyToken(token))
+            {
+                bool isAggregated = true;
+                return requestDAO.GetByOffice(officeId, isAggregated);
+            }
+
+            Debug.WriteLine("Forbidden");
+            return new List<RequestAggregatedToAllModel>();
+        }
+
+        [Route("api/all-request/service/{serviceId:int}")]
+        [HttpGet]
+        public dynamic GetAllRequestByService(int serviceId)
+        {
+            string token = Convert.ToString(Request.Headers.Authorization);
+
+            if (AuthManager.VerifyToken(token))
+            {
+                bool isAggregated = false;
+                return requestDAO.GetByService(serviceId, isAggregated);
+            }
+
+            Debug.WriteLine("Forbidden");
+            return new List<RequestAggregatedToAllModel>();
+        }
+
+        [Route("api/all-request-aggregated/service/{serviceId:int}")]
+        [HttpGet]
+        public dynamic GetAllRequestAggregatedByService(int serviceId)
+        {
+            string token = Convert.ToString(Request.Headers.Authorization);
+
+            if (AuthManager.VerifyToken(token))
+            {
+                bool isAggregated = true;
+                return requestDAO.GetByService(serviceId, isAggregated);
             }
 
             Debug.WriteLine("Forbidden");

@@ -120,6 +120,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\Office\OfficeController.cs" />
     <Compile Include="Controllers\Request\RequestController.cs" />
+    <Compile Include="Controllers\Request\RequestSqlParser.cs" />
     <Compile Include="Controllers\Service\ServiceController.cs" />
     <Compile Include="Controllers\Test\TestController.cs" />
     <Compile Include="Controllers\User\LoginController.cs" />

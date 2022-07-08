@@ -9,11 +9,14 @@ using BookingSystem.Helper;
 using System.IO;
 using System.Web;
 using System.Dynamic;
+using BookingSystem.Controllers.Request;
 
 namespace BookingSystem.Data.Request
 {
     public class RequestDAO
     {
+        public RequestSqlParser requestSqlParser = new RequestSqlParser();
+
         private string connectionString = Constants.ConnectionString;
         public string path = HttpContext.Current.Server.MapPath("~/Files"); //Path
         public string localPath = @"c:\BookingSystemFiles";
@@ -79,7 +82,7 @@ namespace BookingSystem.Data.Request
             else return "The data sent are missing some field/s.";
         }
 
-        public dynamic FindOne(string trackingId)
+        public dynamic FindOne(string trackingId, bool isAggregated)
         {
             try
             {
@@ -88,12 +91,21 @@ namespace BookingSystem.Data.Request
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
                     connection.Open();
-                    string sqlQuery = "SELECT Requests.Id, Requests.TrackingId, Requests.UserNote, Requests.OfficeNote, Requests.FileName, Requests.FileSize, Requests.FileExtension, Offices.Name as Office, Services.Name as Service, Statuses.Name as Status, Requests.CreatedAt, Requests.UpdatedAt, Requests.FinishedAt " +
-                        "FROM Requests LEFT JOIN Statuses ON Requests.StatusId=Statuses.Id " +
-                        "LEFT JOIN Offices ON Requests.OfficeId=Offices.Id " +
-                        "LEFT JOIN  Services ON Requests.ServiceId=Services.Id " +
-                        "WHERE TrackingId=@TrackingId " +
-                        "ORDER BY Requests.CreatedAt";
+                    string sqlQuery = "";
+
+                    if (isAggregated == true)
+                    {
+                        sqlQuery = "SELECT Requests.Id, Requests.TrackingId, Requests.UserNote, Requests.OfficeNote, Requests.FileName, Requests.FileSize, Requests.FileExtension, Offices.Name as Office, Services.Name as Service, Statuses.Name as Status, Requests.CreatedAt, Requests.UpdatedAt, Requests.FinishedAt " +
+                            "FROM Requests LEFT JOIN Statuses ON Requests.StatusId=Statuses.Id " +
+                            "LEFT JOIN Offices ON Requests.OfficeId=Offices.Id " +
+                            "LEFT JOIN  Services ON Requests.ServiceId=Services.Id " +
+                            "WHERE TrackingId=@TrackingId " +
+                            "ORDER BY Requests.CreatedAt";
+                    }
+                    else
+                    {
+                        sqlQuery = "SELECT * FROM Requests WHERE TrackingId=@TrackingId ORDER BY CreatedAt";
+                    }
 
                     SqlCommand command = new SqlCommand(sqlQuery, connection);
                     command.Parameters.AddWithValue("@TrackingId", trackingId);
@@ -103,20 +115,15 @@ namespace BookingSystem.Data.Request
                     {
                         while (reader.Read())
                         {
-                            requestModel.Id = Convert.ToInt32(reader["Id"]);
-                            requestModel.TrackingId = Convert.ToString(reader["TrackingId"]);
-                            requestModel.Office = Convert.ToString(reader["Office"]);
-                            requestModel.Service = Convert.ToString(reader["Service"]);
-                            requestModel.Status = Convert.ToString(reader["Status"]);
-                            requestModel.UserNote = Convert.ToString(reader["UserNote"]);
-                            requestModel.OfficeNote = Convert.ToString(reader["OfficeNote"]);
-                            //requestModel.FileData = Convert.ToString(fileBase64);
-                            requestModel.FileName = Convert.ToString(reader["FileName"]);
-                            requestModel.FileSize = Convert.ToUInt64(reader["FileSize"]);
-                            requestModel.FileExtension = Convert.ToString(reader["FileExtension"]);
-                            requestModel.CreatedAt = Convert.ToDateTime(reader["CreatedAt"]);
-                            requestModel.UpdatedAt = Convert.ToDateTime(reader["UpdatedAt"]);
-                            requestModel.FinishedAt = Validate.Date(reader, "FinishedAt");
+                            if (isAggregated == true)
+                            {
+                                requestSqlParser.GetOneAggregated(reader, requestModel);
+                            }
+                            else
+                            {
+                                requestSqlParser.GetOne(reader, requestModel);
+                            }
+
                         }
                     }
 
@@ -141,7 +148,7 @@ namespace BookingSystem.Data.Request
         //Debug.WriteLine(fileByte);
         //Debug.WriteLine(fileBase64);
 
-        public string UpdateOne(RequestModel requestModel, bool isModelValidate)
+        public string UpdateOne(RequestUpdateModel requestModel, bool isModelValidate)
         {
             if (isModelValidate)
             {
@@ -150,15 +157,27 @@ namespace BookingSystem.Data.Request
                     using (SqlConnection connection = new SqlConnection(connectionString))
                     {
                         connection.Open();
-                        string query = "Update Requests Set UserNote=@UserNote, OfficeNote=@OfficeNote, Status=@Status, UpdatedAt=GETDATE() Where TrackingId=@TrackingId";
-                        SqlCommand command = new SqlCommand(query, connection);
 
-                        command.Parameters.AddWithValue("@TrackingId", requestModel.TrackingId);
-                        command.Parameters.AddWithValue("@UserNote", requestModel.UserNote);
-                        command.Parameters.AddWithValue("@OfficeNote", requestModel.OfficeNote);
-                        command.Parameters.AddWithValue("@StatusId", requestModel.StatusId);
-                        command.ExecuteNonQuery();
-                        connection.Close();
+                        if (requestModel.IsFileNew != true)
+                        {
+                            string query = "Update Requests Set UserNote=@UserNote, OfficeNote=@OfficeNote, StatusId=@StatusId, UpdatedAt=GETDATE() Where TrackingId=@TrackingId";
+                            SqlCommand command = new SqlCommand(query, connection);
+
+                            command.Parameters.AddWithValue("@TrackingId", requestModel.TrackingId);
+                            command.Parameters.AddWithValue("@UserNote", requestModel.UserNote);
+                            command.Parameters.AddWithValue("@OfficeNote", requestModel.OfficeNote);
+                            command.Parameters.AddWithValue("@StatusId", requestModel.StatusId);
+
+                            command.ExecuteNonQuery();
+                            connection.Close();
+                        }
+
+                        else
+                        {
+                            dynamic oldRequest = FindOne(requestModel.TrackingId, false);
+                            Debug.WriteLine(oldRequest.UserNote as string);
+                            Debug.WriteLine(oldRequest.OfficeNote as string);
+                        }
                     }
 
                     return "Updated";
@@ -176,19 +195,20 @@ namespace BookingSystem.Data.Request
         {
             try
             {
+                dynamic oldRequest = FindOne(trackingId, false);
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
                     connection.Open();
-                    string query = "Delete from Requests Where TrackingId=@TrackingId ORDER BY CreatedAt";
+                    string query = "Delete from Requests Where TrackingId=@TrackingId";
                     SqlCommand command = new SqlCommand(query, connection);
                     command.Parameters.AddWithValue("@TrackingId", trackingId);
                     command.ExecuteNonQuery();
                     connection.Close();
                 }
 
-                var fileName = $"{trackingId}.pdf";
-                File.Delete(Path.Combine(path, fileName));
-                File.Delete(Path.Combine(localPath, fileName));
+                //var fileName = $"{trackingId}.pdf";
+                //File.Delete(Path.Combine(path, fileName));
+                //File.Delete(Path.Combine(localPath, fileName));
 
                 return "Deleted";
             }
@@ -199,75 +219,30 @@ namespace BookingSystem.Data.Request
             }
         }
 
-        public List<RequestAggregatedToAllModel> GetAllAggregated()
+        public dynamic GetByStatus(int statusId, bool isAggregated)
         {
-            List<RequestAggregatedToAllModel> returnList = new List<RequestAggregatedToAllModel>();
+            List<dynamic> returnList = new List<dynamic>();
             try
             {
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
                     connection.Open();
-                    string sqlQuery = "SELECT Requests.Id, Requests.TrackingId, Requests.UserNote, Requests.OfficeNote, Requests.FileName, Requests.FileSize, Requests.FileExtension, Offices.Name as Office, Services.Name as Service, Statuses.Name as Status, Requests.CreatedAt, Requests.UpdatedAt, Requests.FinishedAt " +
-                        "FROM Requests LEFT JOIN Statuses ON Requests.StatusId=Statuses.Id " +
-                        "LEFT JOIN Offices ON Requests.OfficeId=Offices.Id " +
-                        "LEFT JOIN  Services ON Requests.ServiceId=Services.Id " +
-                        "ORDER BY Requests.CreatedAt";
+                    string sqlQuery = "";
 
-                    SqlCommand command = new SqlCommand(sqlQuery, connection);
-
-                    SqlDataReader reader = command.ExecuteReader();
-
-                    if (reader.HasRows)
+                    if (isAggregated == true)
                     {
-                        while (reader.Read())
-                        {
-                            RequestAggregatedToAllModel requestModel = new RequestAggregatedToAllModel();
-                            Debug.WriteLine(reader["Id"]);
-                            requestModel.Id = Convert.ToInt32(reader["Id"]);
-                            requestModel.TrackingId = Convert.ToString(reader["TrackingId"]);
-                            requestModel.Office = Convert.ToString(reader["Office"]);
-                            requestModel.Service = Convert.ToString(reader["Service"]);
-                            requestModel.Status = Convert.ToString(reader["Status"]);
-                            requestModel.UserNote = Convert.ToString(reader["UserNote"]);
-                            requestModel.OfficeNote = Convert.ToString(reader["OfficeNote"]);
-                            //requestModel.FileData = Convert.ToString(reader["FileData"]);
-                            requestModel.FileName = Convert.ToString(reader["FileName"]);
-                            requestModel.FileSize = Convert.ToInt32(reader["FileSize"]);
-                            requestModel.FileExtension = Convert.ToString(reader["FileExtension"]);
-                            requestModel.CreatedAt = Convert.ToDateTime(reader["CreatedAt"]);
-                            requestModel.UpdatedAt = Convert.ToDateTime(reader["UpdatedAt"]);
-                            requestModel.FinishedAt = Validate.Date(reader, "FinishedAt");
-                            returnList.Add(requestModel);
-                        }
+                        sqlQuery = "SELECT Requests.Id, Requests.TrackingId, Requests.UserNote, Requests.OfficeNote, Requests.FileName, Requests.FileSize, Requests.FileExtension, Offices.Name as Office, Services.Name as Service, Statuses.Name as Status, Requests.CreatedAt, Requests.UpdatedAt, Requests.FinishedAt " +
+                                    "FROM Requests LEFT JOIN Statuses ON Requests.StatusId=Statuses.Id " +
+                                    "LEFT JOIN Offices ON Requests.OfficeId=Offices.Id " +
+                                    "LEFT JOIN  Services ON Requests.ServiceId=Services.Id " +
+                                    "WHERE StatusId = @StatusID " +
+                                    "ORDER BY Requests.CreatedAt";
+                    }
+                    else
+                    {
+                        sqlQuery = "SELECT * FROM Requests WHERE StatusId = @StatusID ORDER BY CreatedAt";
                     }
 
-
-                    connection.Close();
-                }
-
-                return returnList;
-            }
-            catch (Exception e)
-            {
-                Debug.WriteLine(e);
-                return returnList;
-            }
-        }
-
-        public List<RequestAggregatedToAllModel> GetByStatus(int statusId)
-        {
-            List<RequestAggregatedToAllModel> returnList = new List<RequestAggregatedToAllModel>();
-            try
-            {
-                using (SqlConnection connection = new SqlConnection(connectionString))
-                {
-                    connection.Open();
-                    string sqlQuery = "SELECT Requests.Id, Requests.TrackingId, Requests.UserNote, Requests.OfficeNote, Requests.FileName, Requests.FileSize, Requests.FileExtension, Offices.Name as Office, Services.Name as Service, Statuses.Name as Status, Requests.CreatedAt, Requests.UpdatedAt, Requests.FinishedAt " +
-                    "FROM Requests LEFT JOIN Statuses ON Requests.StatusId=Statuses.Id " +
-                    "LEFT JOIN Offices ON Requests.OfficeId=Offices.Id " +
-                    "LEFT JOIN  Services ON Requests.ServiceId=Services.Id " +
-                    "WHERE StatusId = @StatusID "+
-                    "ORDER BY Requests.CreatedAt";
 
                     SqlCommand command = new SqlCommand(sqlQuery, connection);
                     command.Parameters.AddWithValue("@StatusID", statusId);
@@ -277,27 +252,16 @@ namespace BookingSystem.Data.Request
                     {
                         while (reader.Read())
                         {
-                            RequestAggregatedToAllModel requestModel = new RequestAggregatedToAllModel();
-                            Debug.WriteLine(reader["Id"]);
-                            requestModel.Id = Convert.ToInt32(reader["Id"]);
-                            requestModel.TrackingId = Convert.ToString(reader["TrackingId"]);
-                            requestModel.Office = Convert.ToString(reader["Office"]);
-                            requestModel.Service = Convert.ToString(reader["Service"]);
-                            requestModel.Status = Convert.ToString(reader["Status"]);
-                            requestModel.UserNote = Convert.ToString(reader["UserNote"]);
-                            requestModel.OfficeNote = Convert.ToString(reader["OfficeNote"]);
-                            //requestModel.FileData = Convert.ToString(reader["FileData"]);
-                            requestModel.FileName = Convert.ToString(reader["FileName"]);
-                            requestModel.FileSize = Convert.ToInt32(reader["FileSize"]);
-                            requestModel.FileExtension = Convert.ToString(reader["FileExtension"]);
-                            requestModel.CreatedAt = Convert.ToDateTime(reader["CreatedAt"]);
-                            requestModel.UpdatedAt = Convert.ToDateTime(reader["UpdatedAt"]);
-                            requestModel.FinishedAt = Validate.Date(reader, "FinishedAt");
-                            returnList.Add(requestModel);
+                            if (isAggregated == true)
+                            {
+                                requestSqlParser.GetListAggregated(reader, returnList);
+                            }
+                            else
+                            {
+                                requestSqlParser.GetList(reader, returnList);
+                            }
                         }
                     }
-
-
                     connection.Close();
                 }
 
@@ -310,20 +274,32 @@ namespace BookingSystem.Data.Request
             }
         }
 
-        public List<RequestAggregatedToAllModel> GetByOffice(int officeId)
+        public dynamic GetByOffice(int officeId, bool isAggregated)
         {
-            List<RequestAggregatedToAllModel> returnList = new List<RequestAggregatedToAllModel>();
+            List<dynamic> returnList = new List<dynamic>();
             try
             {
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
                     connection.Open();
-                    string sqlQuery = "SELECT Requests.Id, Requests.TrackingId, Requests.UserNote, Requests.OfficeNote, Requests.FileName, Requests.FileSize, Requests.FileExtension, Offices.Name as Office, Services.Name as Service, Statuses.Name as Status, Requests.CreatedAt, Requests.UpdatedAt, Requests.FinishedAt " +
-                    "FROM Requests LEFT JOIN Statuses ON Requests.StatusId=Statuses.Id " +
-                    "LEFT JOIN Offices ON Requests.OfficeId=Offices.Id " +
-                    "LEFT JOIN  Services ON Requests.ServiceId=Services.Id " +
-                    "WHERE OfficeId = @OfficeId " +
-                    "ORDER BY Requests.CreatedAt";
+
+                    string sqlQuery = "";
+
+                    if (isAggregated == true)
+                    {
+                        sqlQuery = "SELECT Requests.Id, Requests.TrackingId, Requests.UserNote, Requests.OfficeNote, Requests.FileName, Requests.FileSize, Requests.FileExtension, Offices.Name as Office, Services.Name as Service, Statuses.Name as Status, Requests.CreatedAt, Requests.UpdatedAt, Requests.FinishedAt " +
+                                    "FROM Requests LEFT JOIN Statuses ON Requests.StatusId=Statuses.Id " +
+                                    "LEFT JOIN Offices ON Requests.OfficeId=Offices.Id " +
+                                    "LEFT JOIN  Services ON Requests.ServiceId=Services.Id " +
+                                    "WHERE OfficeId = @OfficeId " +
+                                    "ORDER BY Requests.CreatedAt";
+                    }
+                    else
+                    {
+                        sqlQuery = "SELECT * FROM Requests WHERE OfficeId = @OfficeId ORDER BY CreatedAt";
+                    }
+
+
                     SqlCommand command = new SqlCommand(sqlQuery, connection);
                     command.Parameters.AddWithValue("@OfficeId", officeId);
                     SqlDataReader reader = command.ExecuteReader();
@@ -332,23 +308,14 @@ namespace BookingSystem.Data.Request
                     {
                         while (reader.Read())
                         {
-                            RequestAggregatedToAllModel requestModel = new RequestAggregatedToAllModel();
-                            Debug.WriteLine(reader["Id"]);
-                            requestModel.Id = Convert.ToInt32(reader["Id"]);
-                            requestModel.TrackingId = Convert.ToString(reader["TrackingId"]);
-                            requestModel.Office = Convert.ToString(reader["Office"]);
-                            requestModel.Service = Convert.ToString(reader["Service"]);
-                            requestModel.Status = Convert.ToString(reader["Status"]);
-                            requestModel.UserNote = Convert.ToString(reader["UserNote"]);
-                            requestModel.OfficeNote = Convert.ToString(reader["OfficeNote"]);
-                            //requestModel.FileData = Convert.ToString(reader["FileData"]);
-                            requestModel.FileName = Convert.ToString(reader["FileName"]);
-                            requestModel.FileSize = Convert.ToInt32(reader["FileSize"]);
-                            requestModel.FileExtension = Convert.ToString(reader["FileExtension"]);
-                            requestModel.CreatedAt = Convert.ToDateTime(reader["CreatedAt"]);
-                            requestModel.UpdatedAt = Convert.ToDateTime(reader["UpdatedAt"]);
-                            requestModel.FinishedAt = Validate.Date(reader, "FinishedAt");
-                            returnList.Add(requestModel);
+                            if (isAggregated == true)
+                            {
+                                requestSqlParser.GetListAggregated(reader, returnList);
+                            }
+                            else
+                            {
+                                requestSqlParser.GetList(reader, returnList);
+                            }
                         }
                     }
 
@@ -365,20 +332,30 @@ namespace BookingSystem.Data.Request
             }
         }
 
-        public List<RequestAggregatedToAllModel> GetByService(int serviceId)
+        public dynamic GetByService(int serviceId, bool isAggregated)
         {
-            List<RequestAggregatedToAllModel> returnList = new List<RequestAggregatedToAllModel>();
+            List<dynamic> returnList = new List<dynamic>();
             try
             {
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
                     connection.Open();
-                    string sqlQuery = "SELECT Requests.Id, Requests.TrackingId, Requests.UserNote, Requests.OfficeNote, Requests.FileName, Requests.FileSize, Requests.FileExtension, Offices.Name as Office, Services.Name as Service, Statuses.Name as Status, Requests.CreatedAt, Requests.UpdatedAt, Requests.FinishedAt " +
-                    "FROM Requests LEFT JOIN Statuses ON Requests.StatusId=Statuses.Id " +
-                    "LEFT JOIN Offices ON Requests.OfficeId=Offices.Id " +
-                    "LEFT JOIN  Services ON Requests.ServiceId=Services.Id " +
-                    "WHERE ServiceId = @ServiceId " +
-                    "ORDER BY Requests.CreatedAt";
+                    string sqlQuery = "";
+
+                    if (isAggregated == true)
+                    {
+                        sqlQuery = "SELECT Requests.Id, Requests.TrackingId, Requests.UserNote, Requests.OfficeNote, Requests.FileName, Requests.FileSize, Requests.FileExtension, Offices.Name as Office, Services.Name as Service, Statuses.Name as Status, Requests.CreatedAt, Requests.UpdatedAt, Requests.FinishedAt " +
+                                    "FROM Requests LEFT JOIN Statuses ON Requests.StatusId=Statuses.Id " +
+                                    "LEFT JOIN Offices ON Requests.OfficeId=Offices.Id " +
+                                    "LEFT JOIN  Services ON Requests.ServiceId=Services.Id " +
+                                    "WHERE ServiceId = @ServiceId " +
+                                    "ORDER BY Requests.CreatedAt";
+                    }
+                    else
+                    {
+                        sqlQuery = "SELECT * FROM Requests WHERE ServiceId = @ServiceId ORDER BY CreatedAt";
+                    }
+
                     SqlCommand command = new SqlCommand(sqlQuery, connection);
                     command.Parameters.AddWithValue("@ServiceId", serviceId);
                     SqlDataReader reader = command.ExecuteReader();
@@ -387,23 +364,14 @@ namespace BookingSystem.Data.Request
                     {
                         while (reader.Read())
                         {
-                            RequestAggregatedToAllModel requestModel = new RequestAggregatedToAllModel();
-                            Debug.WriteLine(reader["Id"]);
-                            requestModel.Id = Convert.ToInt32(reader["Id"]);
-                            requestModel.TrackingId = Convert.ToString(reader["TrackingId"]);
-                            requestModel.Office = Convert.ToString(reader["Office"]);
-                            requestModel.Service = Convert.ToString(reader["Service"]);
-                            requestModel.Status = Convert.ToString(reader["Status"]);
-                            requestModel.UserNote = Convert.ToString(reader["UserNote"]);
-                            requestModel.OfficeNote = Convert.ToString(reader["OfficeNote"]);
-                            //requestModel.FileData = Convert.ToString(reader["FileData"]);
-                            requestModel.FileName = Convert.ToString(reader["FileName"]);
-                            requestModel.FileSize = Convert.ToInt32(reader["FileSize"]);
-                            requestModel.FileExtension = Convert.ToString(reader["FileExtension"]);
-                            requestModel.CreatedAt = Convert.ToDateTime(reader["CreatedAt"]);
-                            requestModel.UpdatedAt = Convert.ToDateTime(reader["UpdatedAt"]);
-                            requestModel.FinishedAt = Validate.Date(reader, "FinishedAt");
-                            returnList.Add(requestModel);
+                            if (isAggregated == true)
+                            {
+                                requestSqlParser.GetListAggregated(reader, returnList);
+                            }
+                            else
+                            {
+                                requestSqlParser.GetList(reader, returnList);
+                            }
                         }
                     }
 
@@ -420,15 +388,28 @@ namespace BookingSystem.Data.Request
             }
         }
 
-        public List<RequestModel> GetAll()
+        public dynamic GetAll(bool isAggregated)
         {
-            List<RequestModel> returnList = new List<RequestModel>();
+            List<dynamic> returnList = new List<dynamic>();
             try
             {
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
                     connection.Open();
-                    string sqlQuery = "SELECT * FROM Requests ORDER BY CreatedAt";
+                    string sqlQuery = "";
+
+                    if (isAggregated == true)
+                    {
+                        sqlQuery = "SELECT Requests.Id, Requests.TrackingId, Requests.UserNote, Requests.OfficeNote, Requests.FileName, Requests.FileSize, Requests.FileExtension, Offices.Name as Office, Services.Name as Service, Statuses.Name as Status, Requests.CreatedAt, Requests.UpdatedAt, Requests.FinishedAt " +
+                            "FROM Requests LEFT JOIN Statuses ON Requests.StatusId=Statuses.Id " +
+                            "LEFT JOIN Offices ON Requests.OfficeId=Offices.Id " +
+                            "LEFT JOIN  Services ON Requests.ServiceId=Services.Id " +
+                            "ORDER BY Requests.CreatedAt";
+                    }
+                    else
+                    {
+                        sqlQuery = "SELECT * FROM Requests ORDER BY CreatedAt";
+                    }
 
                     SqlCommand command = new SqlCommand(sqlQuery, connection);
 
@@ -438,23 +419,16 @@ namespace BookingSystem.Data.Request
                     {
                         while (reader.Read())
                         {
-                            RequestModel requestModel = new RequestModel();
 
-                            requestModel.Id = Convert.ToInt32(reader["Id"]);
-                            requestModel.TrackingId = Convert.ToString(reader["TrackingId"]);
-                            requestModel.OfficeId = Convert.ToInt32(reader["OfficeId"]);
-                            requestModel.ServiceId = Convert.ToInt32(reader["ServiceId"]);
-                            requestModel.StatusId = Convert.ToInt32(reader["StatusId"]);
-                            requestModel.UserNote = Convert.ToString(reader["UserNote"]);
-                            requestModel.OfficeNote = Convert.ToString(reader["OfficeNote"]);
-                            //requestModel.FileData = Convert.ToString(reader["FileData"]);
-                            requestModel.FileName = Convert.ToString(reader["FileName"]);
-                            requestModel.FileSize = Convert.ToInt32(reader["FileSize"]);
-                            requestModel.FileExtension = Convert.ToString(reader["FileExtension"]);
-                            requestModel.CreatedAt = Convert.ToDateTime(reader["CreatedAt"]);
-                            requestModel.UpdatedAt = Convert.ToDateTime(reader["UpdatedAt"]);
-                            requestModel.FinishedAt = Validate.Date(reader, "FinishedAt");
-                            returnList.Add(requestModel);
+                            if (isAggregated == true)
+                            {
+                                requestSqlParser.GetListAggregated(reader, returnList);
+                            }
+                            else
+                            {
+                                requestSqlParser.GetList(reader, returnList);
+                            }
+
                         }
                     }
 
