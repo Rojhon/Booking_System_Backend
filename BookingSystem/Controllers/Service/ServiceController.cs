@@ -7,6 +7,8 @@ using System.Web.Http;
 using System.Web.Http.Cors;
 using BookingSystem.Models.Services;
 using BookingSystem.Data.Service;
+using BookingSystem.Helper;
+using System.Diagnostics;
 
 namespace BookingSystem.Controllers.Service
 {
@@ -17,37 +19,69 @@ namespace BookingSystem.Controllers.Service
 
         [Route("api/service")]
         [HttpPost]
-        public string CreateOffice([FromBody]ServiceModel body)
+        public dynamic CreateService([FromBody]ServiceModel body)
         {
-            return serviceDAO.InsertOne(body, ModelState.IsValid);
+            string token = Convert.ToString(Request.Headers.Authorization);
+
+            if (AuthManager.VerifyToken(token) && AuthManager.VerifyRole(token))
+            {
+                return serviceDAO.InsertOne(body, ModelState.IsValid);
+            }
+
+            Debug.WriteLine("Unauthorized");
+            return Request.CreateResponse(HttpStatusCode.Unauthorized);
         }
 
         [Route("api/service/{Id}")]
         [HttpGet]
-        public dynamic GetOffice(string Id)
+        public dynamic GetService(string Id)
         {
-            return serviceDAO.FindOne(Id);
+            string token = Convert.ToString(Request.Headers.Authorization);
+
+            if (AuthManager.VerifyToken(token))
+            {
+                return serviceDAO.FindOne(Id);
+            }
+
+            Debug.WriteLine("Unauthorized");
+            return Request.CreateResponse(HttpStatusCode.Unauthorized);
         }
 
         [Route("api/service")]
         [HttpPatch]
-        public string UpdateOffice([FromBody] ServiceModel body)
+        public dynamic UpdateService([FromBody] ServiceModel body)
         {
-            bool doesIdExist = (body.Id > 0);
-            if (!doesIdExist) ModelState.AddModelError("Id", "Data sent must have an Id");
-            return serviceDAO.UpdateOne(body, ModelState.IsValid);
+            string token = Convert.ToString(Request.Headers.Authorization);
+
+            if (AuthManager.VerifyToken(token))
+            {
+                bool doesIdExist = (body.Id > 0);
+                if (!doesIdExist) ModelState.AddModelError("Id", "Data sent must have an Id");
+                return serviceDAO.UpdateOne(body, ModelState.IsValid);
+            }
+
+            Debug.WriteLine("Unauthorized");
+            return Request.CreateResponse(HttpStatusCode.Unauthorized);
         }
 
         [Route("api/service/{Id}")]
         [HttpDelete]
-        public string DeleteOffice(string Id)
+        public dynamic DeleteService(string Id)
         {
-            return serviceDAO.DeleteOne(Id);
+            string token = Convert.ToString(Request.Headers.Authorization);
+
+            if (AuthManager.VerifyToken(token))
+            {
+                return serviceDAO.DeleteOne(Id);
+            }
+
+            Debug.WriteLine("Unauthorized");
+            return Request.CreateResponse(HttpStatusCode.Unauthorized);
         }
 
         [Route("api/service")]
         [HttpGet]
-        public List<ServiceModel> GetAllOffices()
+        public List<ServiceModel> GetAllServices()
         {
             List<ServiceModel> officeModels = serviceDAO.GetAll();
             return officeModels;
