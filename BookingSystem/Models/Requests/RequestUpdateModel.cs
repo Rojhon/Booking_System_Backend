@@ -10,15 +10,13 @@ namespace BookingSystem.Models.Requests
     {
         [Required]
         public int Id { get; set; }
-        [Required]
         public string TrackingId { get; set; }
-        [Required]
         public int OfficeId { get; set; }
-        [Required]
         public int ServiceId { get; set; }
         [Required]
         public int StatusId { get; set; }
         public string UserNote { get; set; }
+        [Required]
         public string OfficeNote { get; set; }
 
         public string NewFileData { get; set; }
@@ -27,7 +25,6 @@ namespace BookingSystem.Models.Requests
         public string NewFileExtension { get; set; }
         public string NewFileName { get; set; }
 
-        [Required]
         public bool IsFileNew { get; set; }
 
         public DateTime CreatedAt { get; set; }

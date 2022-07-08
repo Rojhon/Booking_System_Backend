@@ -158,26 +158,15 @@ namespace BookingSystem.Data.Request
                     {
                         connection.Open();
 
-                        if (requestModel.IsFileNew != true)
-                        {
-                            string query = "Update Requests Set UserNote=@UserNote, OfficeNote=@OfficeNote, StatusId=@StatusId, UpdatedAt=GETDATE() Where TrackingId=@TrackingId";
-                            SqlCommand command = new SqlCommand(query, connection);
+                        string query = "Update Requests Set OfficeNote=@OfficeNote, StatusId=@StatusId, UpdatedAt=GETDATE() Where Id=@Id";
+                        SqlCommand command = new SqlCommand(query, connection);
 
-                            command.Parameters.AddWithValue("@TrackingId", requestModel.TrackingId);
-                            command.Parameters.AddWithValue("@UserNote", requestModel.UserNote);
-                            command.Parameters.AddWithValue("@OfficeNote", requestModel.OfficeNote);
-                            command.Parameters.AddWithValue("@StatusId", requestModel.StatusId);
+                        command.Parameters.AddWithValue("@Id", requestModel.Id);
+                        command.Parameters.AddWithValue("@OfficeNote", requestModel.OfficeNote);
+                        command.Parameters.AddWithValue("@StatusId", requestModel.StatusId);
 
-                            command.ExecuteNonQuery();
-                            connection.Close();
-                        }
-
-                        else
-                        {
-                            dynamic oldRequest = FindOne(requestModel.TrackingId, false);
-                            Debug.WriteLine(oldRequest.UserNote as string);
-                            Debug.WriteLine(oldRequest.OfficeNote as string);
-                        }
+                        command.ExecuteNonQuery();
+                        connection.Close();
                     }
 
                     return "Updated";
