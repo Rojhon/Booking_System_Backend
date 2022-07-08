@@ -22,7 +22,7 @@ namespace BookingSystem.Data.User
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     con.Open();
-                    string sqlQuery = "INSERT INTO Users (FirstName, LastName, RoleId, Email, Password) Values(@FirstName, @LastName, @RoleId, @Email, @Password)";
+                    string sqlQuery = "INSERT INTO Users (FirstName, LastName, RoleId, OfficeId, Email, Password) Values(@FirstName, @LastName, @RoleId, @OfficeId, @Email, @Password)";
                     string password = Hash.HashString(userModel.Password);
 
                     SqlCommand command = new SqlCommand(sqlQuery, con);
@@ -30,6 +30,7 @@ namespace BookingSystem.Data.User
                     command.Parameters.AddWithValue("@FirstName", userModel.FirstName);
                     command.Parameters.AddWithValue("@LastName", userModel.LastName);
                     command.Parameters.AddWithValue("@RoleId", userModel.RoleId);
+                    command.Parameters.AddWithValue("@OfficeId", userModel.OfficeId);
                     command.Parameters.AddWithValue("@Email", userModel.Email);
                     command.Parameters.AddWithValue("@Password", password);
                     command.ExecuteNonQuery();
@@ -237,7 +238,7 @@ namespace BookingSystem.Data.User
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
                     connection.Open();
-                    string sqlQuery = "SELECT Users.Id as UserId, Users.FirstName, Users.LastName, Users.Email,Users.Password, Roles.Id as RoleId, Roles.Name as Role " +
+                    string sqlQuery = "SELECT Users.Id as UserId, Users.FirstName, Users.LastName, Users.Email, Users.Password, Users.OfficeId, Roles.Id as RoleId, Roles.Name as Role " +
                         "FROM Users LEFT JOIN Roles " +
                         "ON Users.RoleId = Roles.Id WHERE Users.Email = @Email";
 
@@ -266,6 +267,7 @@ namespace BookingSystem.Data.User
                             userData.LastName = Convert.ToString(reader["LastName"]);
                             userData.Email = Convert.ToString(reader["Email"]);
                             userData.Role = Convert.ToString(reader["Role"]);
+                            userData.OfficeId = Convert.ToString(reader["OfficeId"]);
                         }
 
                         if (password == userPass)
