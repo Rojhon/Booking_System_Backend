@@ -39,6 +39,21 @@ namespace BookingSystem.Controllers.User
             return Request.CreateResponse(HttpStatusCode.Unauthorized);
         }
 
+        [Route("api/user-aggregated/{Id}")]
+        [HttpGet]
+        public dynamic GetUserAggregated(int Id)
+        {
+            string token = Convert.ToString(Request.Headers.Authorization);
+
+            if (AuthManager.VerifyToken(token))
+            {
+                return userDAO.FindOneAggregated(Id);
+            }
+
+            Debug.WriteLine("Unauthorized");
+            return Request.CreateResponse(HttpStatusCode.Unauthorized);
+        }
+
         [Route("api/user")]
         [HttpPatch]
         public dynamic UpdateUser([FromBody] UserModel body)
@@ -84,7 +99,7 @@ namespace BookingSystem.Controllers.User
             return Request.CreateResponse(HttpStatusCode.Unauthorized);
         }
 
-        [Route("api/user/aggregated")]
+        [Route("api/user-aggregated")]
         [HttpGet]
         public dynamic GetAllAggregated()
         {

@@ -124,14 +124,12 @@
     <Compile Include="Controllers\Request\RequestSqlParser.cs" />
     <Compile Include="Controllers\Service\ServiceController.cs" />
     <Compile Include="Controllers\Test\TestController.cs" />
-    <Compile Include="Controllers\User\LoginController.cs" />
     <Compile Include="Controllers\User\UserController.cs" />
     <Compile Include="Data\DAO.cs" />
     <Compile Include="Data\Office\OfficeDAO.cs" />
     <Compile Include="Data\Request\RequestDAO.cs" />
     <Compile Include="Data\Service\ServiceDAO.cs" />
     <Compile Include="Data\Test\TestDAO.cs" />
-    <Compile Include="Data\User\LoginDAO.cs" />
     <Compile Include="Data\User\UserDAO.cs" />
     <Compile Include="Default.aspx.cs">
       <DependentUpon>Default.aspx</DependentUpon>

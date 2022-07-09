@@ -86,7 +86,7 @@ namespace BookingSystem.Data.User
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     con.Open();
-                    string sqlQuery = "SELECT Users.Id,Users.FirstName, Users.LastName, Users.Email, Roles.Name as Role, Users.CreatedAt, Users.UpdatedAt FROM Users LEFT JOIN Roles ON Users.RoleId = Roles.Id WHERE Users.Id=@Id ORDER BY Users.CreatedAt";
+                    string sqlQuery = "SELECT * FROM Users WHERE Users.Id=@Id ORDER BY Users.CreatedAt";
 
                     SqlCommand command = new SqlCommand(sqlQuery, con);
                     Debug.WriteLine(Id);
@@ -100,6 +100,50 @@ namespace BookingSystem.Data.User
                             userModel.Id = Convert.ToInt32(reader["Id"]);
                             userModel.FirstName = Convert.ToString(reader["FirstName"]);
                             userModel.LastName = Convert.ToString(reader["LastName"]);
+                            userModel.OfficeId = Convert.ToString(reader["OfficeId"]);
+                            userModel.RoleId = Convert.ToString(reader["RoleId"]);
+                            userModel.Email = Convert.ToString(reader["Email"]);
+                            userModel.CreatedAt = Convert.ToDateTime(reader["CreatedAt"]);
+                            userModel.UpdatedAt = Convert.ToDateTime(reader["UpdatedAt"]);
+                        }
+                    }
+
+                    con.Close();
+                }
+
+                return userModel;
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e);
+                return new { };
+            }
+        }
+
+        public dynamic FindOneAggregated(int Id)
+        {
+            try
+            {
+                dynamic userModel = new ExpandoObject();
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    con.Open();
+                    string sqlQuery = "SELECT Users.Id, Users.FirstName, Users.LastName, Users.Email, Roles.Name as Role, Offices.Name as Office, Users.CreatedAt, Users.UpdatedAt FROM Users LEFT JOIN Roles ON Users.RoleId = Roles.Id LEFT JOIN Offices ON Users.OfficeId = Offices.Id WHERE Users.Id=@Id ORDER BY Users.CreatedAt";
+
+                    SqlCommand command = new SqlCommand(sqlQuery, con);
+                    Debug.WriteLine(Id);
+                    command.Parameters.AddWithValue("@Id", Id);
+                    SqlDataReader reader = command.ExecuteReader();
+
+                    if (reader.HasRows)
+                    {
+                        while (reader.Read())
+                        {
+                            userModel.Id = Convert.ToInt32(reader["Id"]);
+                            userModel.FirstName = Convert.ToString(reader["FirstName"]);
+                            userModel.LastName = Convert.ToString(reader["LastName"]);
+                            userModel.Office = Convert.ToString(reader["Office"]);
                             userModel.Role = Convert.ToString(reader["Role"]);
                             userModel.Email = Convert.ToString(reader["Email"]);
                             userModel.CreatedAt = Convert.ToDateTime(reader["CreatedAt"]);
@@ -118,6 +162,7 @@ namespace BookingSystem.Data.User
                 return new { };
             }
         }
+
         public string DeleteOne(string Id)
         {
             try
@@ -166,6 +211,7 @@ namespace BookingSystem.Data.User
                             userModel.FirstName = Convert.ToString(reader["FirstName"]);
                             userModel.LastName = Convert.ToString(reader["LastName"]);
                             userModel.RoleId = Convert.ToInt32(reader["RoleId"]);
+                            userModel.OfficeId = Convert.ToInt32(reader["OfficeId"]);
                             userModel.Email = Convert.ToString(reader["Email"]);
                             userModel.CreatedAt = Convert.ToDateTime(reader["CreatedAt"]);
                             userModel.UpdatedAt = Convert.ToDateTime(reader["UpdatedAt"]);
@@ -194,7 +240,7 @@ namespace BookingSystem.Data.User
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     con.Open();
-                    string sqlQuery = "SELECT Users.Id,Users.FirstName, Users.LastName, Users.Email, Roles.Name as Role, Users.CreatedAt, Users.UpdatedAt FROM Users LEFT JOIN Roles ON Users.RoleId = Roles.Id ORDER BY Users.CreatedAt";
+                    string sqlQuery = "SELECT Users.Id, Users.FirstName, Users.LastName, Users.Email, Roles.Name as Role, Offices.Name as Office, Users.CreatedAt, Users.UpdatedAt FROM Users LEFT JOIN Roles ON Users.RoleId = Roles.Id LEFT JOIN Offices ON Users.OfficeId = Offices.Id ORDER BY Users.CreatedAt";
 
                     SqlCommand command = new SqlCommand(sqlQuery, con);
 
@@ -210,6 +256,7 @@ namespace BookingSystem.Data.User
                             userModel.FirstName = Convert.ToString(reader["FirstName"]);
                             userModel.LastName = Convert.ToString(reader["LastName"]);
                             userModel.Role = Convert.ToString(reader["Role"]);
+                            userModel.Office = Convert.ToString(reader["Office"]);
                             userModel.Email = Convert.ToString(reader["Email"]);
                             userModel.CreatedAt = Convert.ToDateTime(reader["CreatedAt"]);
                             userModel.UpdatedAt = Convert.ToDateTime(reader["UpdatedAt"]);
