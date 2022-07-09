@@ -321,6 +321,7 @@ namespace BookingSystem.Data.User
                         {
                             // Credentials Valid
                             userData.Authorized = true;
+                            userData.ExpiredAt = DateTime.Now.AddDays(2);
 
                             AuthenticationModel authenticationModel = new AuthenticationModel();
                             authenticationModel.Token = Generate.Token();
