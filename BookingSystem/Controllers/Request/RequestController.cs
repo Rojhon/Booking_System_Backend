@@ -23,7 +23,9 @@ namespace BookingSystem.Controllers.Request
         [HttpPost]
         public string CreateRequest([FromBody]RequestModel body)
         {
-            return requestDAO.InsertOne(body, ModelState.IsValid);
+            Debug.WriteLine(ModelState.IsValid);
+            return Convert.ToString(ModelState.IsValid);
+            //return requestDAO.InsertOne(body, ModelState.IsValid);
         }
 
         [Route("api/request/{trackingId}")]
@@ -42,8 +44,6 @@ namespace BookingSystem.Controllers.Request
             bool isAggregated = true;
             return requestDAO.FindOne(trackingId, isAggregated);
         }
-
-        //Request Patch is outdated so i commented it for now
 
         [Route("api/request")]
         [HttpPatch]

@@ -18,6 +18,7 @@ INSERT INTO Statuses(Id, Name) VALUES (1, 'Paid');
 INSERT INTO Statuses(Id, Name) VALUES (2, 'Processing');
 INSERT INTO Statuses(Id, Name) VALUES (3, 'Pending');
 INSERT INTO Statuses(Id, Name) VALUES (4, 'Payment Required');
+INSERT INTO Statuses(Id, Name) VALUES (5, 'Finished');
 
 INSERT INTO Roles(Id, Name) VALUES (1, 'Admin');
 INSERT INTO Roles(Id, Name) VALUES (2, 'Officer');

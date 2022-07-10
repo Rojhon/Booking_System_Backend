@@ -18,15 +18,15 @@ namespace BookingSystem.Models.Requests
         public int StatusId { get; set; }
         public string UserNote { get; set; }
         public string OfficeNote { get; set; }
-        //[Required]
+        [Required]
         public string FileData { get; set; }
         //[Required]
         public string FilePath { get; set; }
-        //[Required]
+        [Range(0, 5242880)]
         public int FileSize { get; set; }
-        //[Required]
+        [Required]
         public string FileExtension { get; set; }
-        //[Required]
+        [Required]
         public string FileName { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
