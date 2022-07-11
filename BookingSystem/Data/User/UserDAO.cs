@@ -97,14 +97,7 @@ namespace BookingSystem.Data.User
                     {
                         while (reader.Read())
                         {
-                            userModel.Id = Convert.ToInt32(reader["Id"]);
-                            userModel.FirstName = Convert.ToString(reader["FirstName"]);
-                            userModel.LastName = Convert.ToString(reader["LastName"]);
-                            userModel.OfficeId = Convert.ToString(reader["OfficeId"]);
-                            userModel.RoleId = Convert.ToString(reader["RoleId"]);
-                            userModel.Email = Convert.ToString(reader["Email"]);
-                            userModel.CreatedAt = Convert.ToDateTime(reader["CreatedAt"]);
-                            userModel.UpdatedAt = Convert.ToDateTime(reader["UpdatedAt"]);
+                            UserSqlParser.GetOne(reader, userModel);
                         }
                     }
 
@@ -140,14 +133,7 @@ namespace BookingSystem.Data.User
                     {
                         while (reader.Read())
                         {
-                            userModel.Id = Convert.ToInt32(reader["Id"]);
-                            userModel.FirstName = Convert.ToString(reader["FirstName"]);
-                            userModel.LastName = Convert.ToString(reader["LastName"]);
-                            userModel.Office = Convert.ToString(reader["Office"]);
-                            userModel.Role = Convert.ToString(reader["Role"]);
-                            userModel.Email = Convert.ToString(reader["Email"]);
-                            userModel.CreatedAt = Convert.ToDateTime(reader["CreatedAt"]);
-                            userModel.UpdatedAt = Convert.ToDateTime(reader["UpdatedAt"]);
+                            UserSqlParser.GetOneAggregated(reader, userModel);
                         }
                     }
 
@@ -163,7 +149,7 @@ namespace BookingSystem.Data.User
             }
         }
 
-        public string DeleteOne(string Id)
+        public string DeleteOne(int Id)
         {
             try
             {
@@ -177,6 +163,8 @@ namespace BookingSystem.Data.User
                     con.Close();
                 }
 
+                AuthManager.DeleteUserToken(Id);
+
                 return "Deleted";
             }
             catch (Exception e)
@@ -186,9 +174,9 @@ namespace BookingSystem.Data.User
             }
         }
 
-        public List<UserModel> GetAll()
+        public List<dynamic> GetAll()
         {
-            List<UserModel> returnList = new List<UserModel>();
+            List<dynamic> returnList = new List<dynamic>();
 
             try
             {
@@ -205,17 +193,7 @@ namespace BookingSystem.Data.User
                     {
                         while (reader.Read())
                         {
-                            UserModel userModel = new UserModel();
-
-                            userModel.Id = Convert.ToInt32(reader["Id"]);
-                            userModel.FirstName = Convert.ToString(reader["FirstName"]);
-                            userModel.LastName = Convert.ToString(reader["LastName"]);
-                            userModel.RoleId = Convert.ToInt32(reader["RoleId"]);
-                            userModel.OfficeId = Convert.ToInt32(reader["OfficeId"]);
-                            userModel.Email = Convert.ToString(reader["Email"]);
-                            userModel.CreatedAt = Convert.ToDateTime(reader["CreatedAt"]);
-                            userModel.UpdatedAt = Convert.ToDateTime(reader["UpdatedAt"]);
-                            returnList.Add(userModel);
+                            UserSqlParser.GetList(reader, returnList);
                         }
                     }
 
@@ -231,9 +209,9 @@ namespace BookingSystem.Data.User
             }
         }
 
-        public List<UserAggregatedModel> GetAllAggregated()
+        public List<dynamic> GetAllAggregated()
         {
-            List<UserAggregatedModel> returnList = new List<UserAggregatedModel>();
+            List<dynamic> returnList = new List<dynamic>();
 
             try
             {
@@ -250,17 +228,7 @@ namespace BookingSystem.Data.User
                     {
                         while (reader.Read())
                         {
-                            UserAggregatedModel userModel = new UserAggregatedModel();
-
-                            userModel.Id = Convert.ToInt32(reader["Id"]);
-                            userModel.FirstName = Convert.ToString(reader["FirstName"]);
-                            userModel.LastName = Convert.ToString(reader["LastName"]);
-                            userModel.Role = Convert.ToString(reader["Role"]);
-                            userModel.Office = Convert.ToString(reader["Office"]);
-                            userModel.Email = Convert.ToString(reader["Email"]);
-                            userModel.CreatedAt = Convert.ToDateTime(reader["CreatedAt"]);
-                            userModel.UpdatedAt = Convert.ToDateTime(reader["UpdatedAt"]);
-                            returnList.Add(userModel);
+                            UserSqlParser.GetListAggregated(reader, returnList);
                         }
                     }
 

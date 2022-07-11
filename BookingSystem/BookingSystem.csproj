@@ -113,7 +113,6 @@
     <Content Include="Sql\DropTable.sql" />
     <Content Include="Sql\Insert.sql" />
     <Content Include="Sql\Select.sql" />
-    <Content Include="Sql\Tests.sql" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
@@ -121,16 +120,15 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\Office\OfficeController.cs" />
     <Compile Include="Controllers\Request\RequestController.cs" />
-    <Compile Include="Controllers\Request\RequestSqlParser.cs" />
+    <Compile Include="Data\Request\RequestSqlParser.cs" />
     <Compile Include="Controllers\Service\ServiceController.cs" />
-    <Compile Include="Controllers\Test\TestController.cs" />
     <Compile Include="Controllers\User\UserController.cs" />
     <Compile Include="Data\DAO.cs" />
     <Compile Include="Data\Office\OfficeDAO.cs" />
     <Compile Include="Data\Request\RequestDAO.cs" />
     <Compile Include="Data\Service\ServiceDAO.cs" />
-    <Compile Include="Data\Test\TestDAO.cs" />
     <Compile Include="Data\User\UserDAO.cs" />
+    <Compile Include="Data\User\UserSqlParser.cs" />
     <Compile Include="Default.aspx.cs">
       <DependentUpon>Default.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

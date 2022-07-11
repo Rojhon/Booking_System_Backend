@@ -23,9 +23,7 @@ namespace BookingSystem.Controllers.Request
         [HttpPost]
         public string CreateRequest([FromBody]RequestModel body)
         {
-            Debug.WriteLine(ModelState.IsValid);
-            return Convert.ToString(ModelState.IsValid);
-            //return requestDAO.InsertOne(body, ModelState.IsValid);
+            return requestDAO.InsertOne(body, ModelState.IsValid);
         }
 
         [Route("api/request/{trackingId}")]
@@ -47,7 +45,7 @@ namespace BookingSystem.Controllers.Request
 
         [Route("api/request")]
         [HttpPatch]
-        public string UpdateRequest([FromBody] RequestUpdateModel body)
+        public dynamic UpdateRequest([FromBody] RequestUpdateModel body)
         {
             string token = Convert.ToString(Request.Headers.Authorization);
             bool doesIdExist = (body.Id > 0);
@@ -59,13 +57,13 @@ namespace BookingSystem.Controllers.Request
                 return requestDAO.UpdateOne(body, ModelState.IsValid);
             }
 
-            Debug.WriteLine("Forbidden");
-            return "Forbidden";
+            Debug.WriteLine("Unauthorized");
+            return Request.CreateResponse(HttpStatusCode.Unauthorized);
         }
 
         [Route("api/request/{trackingId}")]
         [HttpDelete]
-        public string DeleteRequest(string trackingId)
+        public dynamic DeleteRequest(string trackingId)
         {
             string token = Convert.ToString(Request.Headers.Authorization);
 
@@ -74,8 +72,8 @@ namespace BookingSystem.Controllers.Request
                 return requestDAO.DeleteOne(trackingId);
             }
 
-            Debug.WriteLine("Forbidden");
-            return "Forbidden";
+            Debug.WriteLine("Unauthorized");
+            return Request.CreateResponse(HttpStatusCode.Unauthorized);
         }
 
         [Route("api/request")]
@@ -106,8 +104,8 @@ namespace BookingSystem.Controllers.Request
                 return requestDAO.GetAll(isAggregated);
             }
 
-            Debug.WriteLine("Forbidden");
-            return new List<RequestAggregatedToAllModel>();
+            Debug.WriteLine("Unauthorized");
+            return Request.CreateResponse(HttpStatusCode.Unauthorized);
         }
 
         [Route("api/all-request/status/{statusId:int}")]
@@ -122,8 +120,8 @@ namespace BookingSystem.Controllers.Request
                 return requestDAO.GetByStatus(statusId, isAggregated);
             }
 
-            Debug.WriteLine("Forbidden");
-            return new List<RequestAggregatedToAllModel>();
+            Debug.WriteLine("Unauthorized");
+            return Request.CreateResponse(HttpStatusCode.Unauthorized);
         }
 
         [Route("api/all-request-aggregated/status/{statusId:int}")]
@@ -138,8 +136,8 @@ namespace BookingSystem.Controllers.Request
                 return requestDAO.GetByStatus(statusId, isAggregated);
             }
 
-            Debug.WriteLine("Forbidden");
-            return new List<RequestAggregatedToAllModel>();
+            Debug.WriteLine("Unauthorized");
+            return Request.CreateResponse(HttpStatusCode.Unauthorized);
         }
 
         [Route("api/all-request/office/{officeId:int}")]
@@ -155,8 +153,8 @@ namespace BookingSystem.Controllers.Request
                 return requestDAO.GetByOffice(officeId, isAggregated);
             }
 
-            Debug.WriteLine("Forbidden");
-            return new List<RequestAggregatedToAllModel>();
+            Debug.WriteLine("Unauthorized");
+            return Request.CreateResponse(HttpStatusCode.Unauthorized);
         }
 
         [Route("api/all-request-aggregated/office/{officeId:int}")]
@@ -171,8 +169,8 @@ namespace BookingSystem.Controllers.Request
                 return requestDAO.GetByOffice(officeId, isAggregated);
             }
 
-            Debug.WriteLine("Forbidden");
-            return new List<RequestAggregatedToAllModel>();
+            Debug.WriteLine("Unauthorized");
+            return Request.CreateResponse(HttpStatusCode.Unauthorized);
         }
 
         [Route("api/all-request/service/{serviceId:int}")]
@@ -187,8 +185,8 @@ namespace BookingSystem.Controllers.Request
                 return requestDAO.GetByService(serviceId, isAggregated);
             }
 
-            Debug.WriteLine("Forbidden");
-            return new List<RequestAggregatedToAllModel>();
+            Debug.WriteLine("Unauthorized");
+            return Request.CreateResponse(HttpStatusCode.Unauthorized);
         }
 
         [Route("api/all-request-aggregated/service/{serviceId:int}")]
@@ -203,8 +201,8 @@ namespace BookingSystem.Controllers.Request
                 return requestDAO.GetByService(serviceId, isAggregated);
             }
 
-            Debug.WriteLine("Forbidden");
-            return new List<RequestAggregatedToAllModel>();
+            Debug.WriteLine("Unauthorized");
+            return Request.CreateResponse(HttpStatusCode.Unauthorized);
         }
 
     }

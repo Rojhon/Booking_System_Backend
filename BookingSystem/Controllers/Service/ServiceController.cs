@@ -79,12 +79,29 @@ namespace BookingSystem.Controllers.Service
             return Request.CreateResponse(HttpStatusCode.Unauthorized);
         }
 
-        [Route("api/service")]
+        [Route("api/student-service")]
         [HttpGet]
-        public List<ServiceModel> GetAllServices()
+        public List<ServiceModel> GetAllStudentService()
         {
             List<ServiceModel> officeModels = serviceDAO.GetAll();
             return officeModels;
+        }
+
+        [Route("api/service")]
+        [HttpGet]
+        public dynamic GetAllServices()
+        {
+            string token = Convert.ToString(Request.Headers.Authorization);
+
+            if (AuthManager.VerifyToken(token))
+            {
+                List<ServiceModel> officeModels = serviceDAO.GetAll();
+                return officeModels;
+            }
+
+            Debug.WriteLine("Unauthorized");
+            return Request.CreateResponse(HttpStatusCode.Unauthorized);
+
         }
     }
 }
