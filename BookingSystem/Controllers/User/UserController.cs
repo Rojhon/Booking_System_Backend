@@ -21,7 +21,11 @@ namespace BookingSystem.Controllers.User
         [HttpPost]
         public string CreateUser([FromBody]UserModel body)
         {
-            return userDAO.InsertOne(body);
+            if (ModelState.IsValid)
+            {
+                return userDAO.InsertOne(body);
+            }
+            return "Error";
         }
 
         [Route("api/user/{Id}")]
@@ -62,7 +66,10 @@ namespace BookingSystem.Controllers.User
 
             if (AuthManager.VerifyToken(token))
             {
-                return userDAO.UpdateOne(body);
+                if (ModelState.IsValid)
+                {
+                    return userDAO.UpdateOne(body);
+                }
             }
 
             Debug.WriteLine("Unauthorized");
