@@ -17,42 +17,43 @@ namespace BookingSystem.Data.User
 
         public string InsertOne(UserModel userModel)
         {
+            string msg = "";
             try
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     con.Open();
-                    string sqlQuery = "INSERT INTO Users (FirstName, LastName, RoleId, OfficeId, Email, Password) Values(@FirstName, @LastName, @RoleId, @OfficeId, @Email, @Password)";
+                    string sqlQuery = "INSERT INTO Users (FirstName, LastName, RoleId, Email, Password) Values(@FirstName, @LastName, @RoleId, @Email, @Password)";
                     string password = Hash.HashString(userModel.Password);
+                    
 
-                    SqlCommand check_User_Name = new SqlCommand("SELECT COUNT(*) FROM Users WHERE Users.Email=@Email" , con);
+                    SqlCommand check_User_Name = new SqlCommand("SELECT * FROM Users WHERE Users.Email=@Email ORDER BY Users.CreatedAt", con);
                     check_User_Name.Parameters.AddWithValue("@Email", userModel.Email);
-                    int UserExist = (int)check_User_Name.ExecuteScalar();
+                    int UserExist = Convert.ToInt32(check_User_Name.ExecuteScalar() ?? 0);
 
-                    if(UserExist > 0)
+                    if (UserExist > 0)
                     {
-                        Debug.WriteLine("Email exist");
-                       //Username exist
+                        Debug.WriteLine("Email already exist");
+                        Debug.WriteLine(UserExist);
+                        msg = "Email already exist";
                     }
                     else
                     {
-                        Debug.WriteLine("Email exist");
-                       //Username doesn't exist.
+                        SqlCommand command = new SqlCommand(sqlQuery, con);
+
+                        command.Parameters.AddWithValue("@FirstName", userModel.FirstName);
+                        command.Parameters.AddWithValue("@LastName", userModel.LastName);
+                        command.Parameters.AddWithValue("@RoleId", userModel.RoleId);
+                        command.Parameters.AddWithValue("@Email", userModel.Email);
+                        command.Parameters.AddWithValue("@Password", password);
+                        command.ExecuteNonQuery();
+                        Debug.WriteLine("Email does not exist");
+                        msg = "Success";
                     }
 
-                    SqlCommand command = new SqlCommand(sqlQuery, con);
-
-                    command.Parameters.AddWithValue("@FirstName", userModel.FirstName);
-                    command.Parameters.AddWithValue("@LastName", userModel.LastName);
-                    command.Parameters.AddWithValue("@RoleId", userModel.RoleId);
-                    command.Parameters.AddWithValue("@OfficeId", userModel.OfficeId);
-                    command.Parameters.AddWithValue("@Email", userModel.Email);
-                    command.Parameters.AddWithValue("@Password", password);
-                    command.ExecuteNonQuery();
                     con.Close();
                 }
-
-                    return "Success";
+                return msg;
             }
             catch (Exception e)
             {
