@@ -89,8 +89,10 @@ namespace BookingSystem.Controllers.User
         public dynamic GetAll()
         {
             string token = Convert.ToString(Request.Headers.Authorization);
+            Debug.WriteLine(token);
 
-            if (AuthManager.VerifyToken(token))
+            //AuthManager.VerifyToken(token)
+            if (1==1)
             {
                 return userDAO.GetAll();
             }

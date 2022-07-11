@@ -25,6 +25,21 @@ namespace BookingSystem.Data.User
                     string sqlQuery = "INSERT INTO Users (FirstName, LastName, RoleId, OfficeId, Email, Password) Values(@FirstName, @LastName, @RoleId, @OfficeId, @Email, @Password)";
                     string password = Hash.HashString(userModel.Password);
 
+                    SqlCommand check_User_Name = new SqlCommand("SELECT COUNT(*) FROM Users WHERE Users.Email=@Email" , con);
+                    check_User_Name.Parameters.AddWithValue("@Email", userModel.Email);
+                    int UserExist = (int)check_User_Name.ExecuteScalar();
+
+                    if(UserExist > 0)
+                    {
+                        Debug.WriteLine("Email exist");
+                       //Username exist
+                    }
+                    else
+                    {
+                        Debug.WriteLine("Email exist");
+                       //Username doesn't exist.
+                    }
+
                     SqlCommand command = new SqlCommand(sqlQuery, con);
 
                     command.Parameters.AddWithValue("@FirstName", userModel.FirstName);
