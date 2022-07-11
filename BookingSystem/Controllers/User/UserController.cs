@@ -71,7 +71,7 @@ namespace BookingSystem.Controllers.User
 
         [Route("api/user/{Id}")]
         [HttpDelete]
-        public dynamic DeleteUser(string Id)
+        public dynamic DeleteUser(int Id)
         {
             string token = Convert.ToString(Request.Headers.Authorization);
 

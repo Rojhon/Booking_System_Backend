@@ -51,7 +51,6 @@ namespace BookingSystem.Controllers.Request
         public void GetListAggregated(SqlDataReader reader, List<dynamic> returnList)
         {
             RequestAggregatedToAllModel requestModel = new RequestAggregatedToAllModel();
-            Debug.WriteLine(reader["Id"]);
             requestModel.Id = Convert.ToInt32(reader["Id"]);
             requestModel.TrackingId = Convert.ToString(reader["TrackingId"]);
             requestModel.Office = Convert.ToString(reader["Office"]);

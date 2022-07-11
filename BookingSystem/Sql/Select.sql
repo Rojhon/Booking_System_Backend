@@ -9,6 +9,8 @@ SELECT * FROM Statuses;
 SELECT * FROM Roles;
 SELECT * FROM Authentications;
 
+DELETE FROM Requests;
+
 -- Get with order by
 SELECT * FROM Requests ORDER BY TrackingId;
 SELECT * FROM Requests ORDER BY UserNote DESC;

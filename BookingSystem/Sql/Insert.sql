@@ -2,6 +2,7 @@
 
 INSERT INTO Offices (Name) VALUES ('Registrar''s Office');
 INSERT INTO Offices (Name) VALUES ('OSDS Office');
+INSERT INTO Offices (Name) VALUES ('Admin Office');
 
 INSERT INTO Services(Name, Fee) VALUES ('Transcript of Records', 50);
 INSERT INTO Services(Name, Fee) VALUES ('Scholastic Records', 20);

@@ -47,6 +47,7 @@ namespace BookingSystem.Data.Request
                     DateTime currentDate = DateTime.Now;
                     string trackingId = $"{Generate.RandomString(9)}-{Convert.ToString(currentDate.Ticks)}-{Convert.ToString(requestModel.OfficeId)}-{Convert.ToString(requestModel.ServiceId)}";
                     string fileName = $"{trackingId}-{requestModel.FileName}";
+                    string fullFileName = fileName + requestModel.FileExtension;
                     string filePath = Path.Combine(path, fileName);
 
                     using (SqlConnection connection = new SqlConnection(connectionString))
@@ -68,10 +69,10 @@ namespace BookingSystem.Data.Request
                         connection.Close();
                     }
 
-                    //SaveFile(requestModel.FileData, fileName, path);
-                    //SaveFile(requestModel.FileData, fileName, localPath);
+                    SaveFile(requestModel.FileData, fullFileName, path);
+                    SaveFile(requestModel.FileData, fullFileName, localPath);
 
-                    return "Success";
+                    return trackingId;
                 }
                 catch (Exception e)
                 {
@@ -195,9 +196,10 @@ namespace BookingSystem.Data.Request
                     connection.Close();
                 }
 
-                //var fileName = $"{trackingId}.pdf";
-                //File.Delete(Path.Combine(path, fileName));
-                //File.Delete(Path.Combine(localPath, fileName));
+                var fileName = $"{oldRequest.FileName}{oldRequest.FileExtension}";
+                Debug.WriteLine(fileName);
+                File.Delete(Path.Combine(path, fileName));
+                File.Delete(Path.Combine(localPath, fileName));
 
                 return "Deleted";
             }
