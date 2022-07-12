@@ -23,7 +23,7 @@ namespace BookingSystem.Data.User
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     con.Open();
-                    string sqlQuery = "INSERT INTO Users (FirstName, LastName, RoleId, Email, Password) Values(@FirstName, @LastName, @RoleId, @Email, @Password)";
+                    string sqlQuery = "INSERT INTO Users (FirstName, LastName, RoleId, OfficeId, Email, Password) Values(@FirstName, @LastName, @RoleId, @OfficeId, @Email, @Password)";
                     string password = Hash.HashString(userModel.Password);
                     
 
@@ -44,6 +44,7 @@ namespace BookingSystem.Data.User
                         command.Parameters.AddWithValue("@FirstName", userModel.FirstName);
                         command.Parameters.AddWithValue("@LastName", userModel.LastName);
                         command.Parameters.AddWithValue("@RoleId", userModel.RoleId);
+                        command.Parameters.AddWithValue("@OfficeId", userModel.RoleId);
                         command.Parameters.AddWithValue("@Email", userModel.Email);
                         command.Parameters.AddWithValue("@Password", password);
                         command.ExecuteNonQuery();

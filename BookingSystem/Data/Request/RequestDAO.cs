@@ -18,8 +18,8 @@ namespace BookingSystem.Data.Request
         public RequestSqlParser requestSqlParser = new RequestSqlParser();
 
         private string connectionString = Constants.ConnectionString;
-        public string path = HttpContext.Current.Server.MapPath("~/Files"); //Path
-        public string localPath = @"c:\BookingSystemFiles";
+        public string path = Constants.Path;
+        public string localPath = Constants.LocalPath;
 
         public bool SaveFile(string fileBase64, string fileName, string path)
         {

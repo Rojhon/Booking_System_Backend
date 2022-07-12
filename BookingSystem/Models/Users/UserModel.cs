@@ -10,7 +10,9 @@ namespace BookingSystem.Models.Users
     public class UserModel
     {
         public int Id { get; set; }
+        [Required]
         public int RoleId { get; set; }
+        [Required]
         public int OfficeId { get; set; }
         [Required]
         public string FirstName { get; set; }
@@ -20,7 +22,7 @@ namespace BookingSystem.Models.Users
         [RegularExpression(@"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9]+\.[a-zA-Z0-9-.]+$")]
         public string Email { get; set; }
         [Required]
-        [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[.!#$%&'*+/=?^_`{|}~-]).{8,}$")]
+        [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[.!@#$%&'*+/=?^_`{|}~-]).{8,100}$")]
         public string Password { get; set; }
         //public string Verified { get; set; }
         //public string Active { get; set; }

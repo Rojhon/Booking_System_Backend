@@ -109,6 +109,7 @@
   <ItemGroup>
     <Content Include="Default.aspx" />
     <Content Include="Global.asax" />
+    <Content Include="Sql\Delete.sql" />
     <Content Include="Sql\CreateTable.sql" />
     <Content Include="Sql\DropTable.sql" />
     <Content Include="Sql\Insert.sql" />
