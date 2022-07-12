@@ -101,6 +101,7 @@ namespace BookingSystem.Data.Request
                             "LEFT JOIN Offices ON Requests.OfficeId=Offices.Id " +
                             "LEFT JOIN  Services ON Requests.ServiceId=Services.Id " +
                             "WHERE TrackingId=@TrackingId " +
+                            "GROUP BY Status " +
                             "ORDER BY Requests.CreatedAt";
                     }
                     else

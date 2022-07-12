@@ -139,7 +139,7 @@ namespace BookingSystem.Data.Office
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
                     connection.Open();
-                    string sqlQuery = "SELECT * FROM Offices";
+                    string sqlQuery = "SELECT * FROM Offices EXCEPT SELECT * FROM Offices WHERE Name='Admin Office'";
 
                     SqlCommand command = new SqlCommand(sqlQuery, connection);
 

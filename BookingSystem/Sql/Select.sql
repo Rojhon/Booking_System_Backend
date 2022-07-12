@@ -2,7 +2,7 @@
 
 --Get all table values
 SELECT * FROM Requests;
-SELECT * FROM Offices;
+SELECT * FROM Offices EXCEPT SELECT * FROM Offices WHERE Name='Admin Office';
 SELECT * FROM Services;
 SELECT * FROM Users;
 SELECT * FROM Statuses;
