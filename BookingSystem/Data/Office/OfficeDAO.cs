@@ -153,6 +153,8 @@ namespace BookingSystem.Data.Office
 
                             officeModel.Id = Convert.ToInt32(reader["Id"]);
                             officeModel.Name = Convert.ToString(reader["Name"]);
+                            officeModel.CreatedAt = Convert.ToDateTime(reader["CreatedAt"]);
+                            officeModel.UpdatedAt = Convert.ToDateTime(reader["UpdatedAt"]);
 
                             returnList.Add(officeModel);
                         }

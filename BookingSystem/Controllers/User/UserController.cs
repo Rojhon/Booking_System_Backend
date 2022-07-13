@@ -19,13 +19,18 @@ namespace BookingSystem.Controllers.User
 
         [Route("api/user")]
         [HttpPost]
-        public string CreateUser([FromBody]UserModel body)
+        public dynamic CreateUser([FromBody]UserModel body)
         {
-            if (ModelState.IsValid)
-            {
-                return userDAO.InsertOne(body);
-            }
-            return "Error";
+            string token = Convert.ToString(Request.Headers.Authorization);
+
+                if (ModelState.IsValid && AuthManager.VerifyToken(token) && AuthManager.VerifyRole(token))
+                {
+                    return userDAO.InsertOne(body);
+                }
+
+            Debug.WriteLine("Unauthorized");
+            return Request.CreateResponse(HttpStatusCode.Unauthorized);
+
         }
 
         [Route("api/user/{Id}")]
