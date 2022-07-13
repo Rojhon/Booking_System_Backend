@@ -52,7 +52,7 @@ namespace BookingSystem.Controllers.Request
 
             if (!doesIdExist) ModelState.AddModelError("Id", "Data sent must have an Id");
 
-            if (AuthManager.VerifyToken(token) && AuthManager.VerifyRole(token))
+            if (AuthManager.VerifyToken(token))
             {
                 return requestDAO.UpdateOne(body, ModelState.IsValid);
             }
