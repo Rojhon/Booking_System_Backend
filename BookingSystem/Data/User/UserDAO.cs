@@ -71,11 +71,12 @@ namespace BookingSystem.Data.User
                 {
                     connection.Open();
                     string password = Hash.HashString(userModel.Password);
-                    string query = "Update Users Set FirstName=@FirstName, LastName=@LastName, RoleId=@RoleId, Email=@Email, Password=@Password, UpdatedAt=GETDATE() Where Id=@Id";
+                    string query = "Update Users Set FirstName=@FirstName, LastName=@LastName, RoleId=@RoleId, OfficeId=@OfficeId, Email=@Email, Password=@Password, UpdatedAt=GETDATE() Where Id=@Id";
                     SqlCommand command = new SqlCommand(query, connection);
 
                     command.Parameters.AddWithValue("@FirstName", userModel.FirstName);
                     command.Parameters.AddWithValue("@LastName", userModel.LastName);
+                    command.Parameters.AddWithValue("@OfficeId", userModel.OfficeId);
                     command.Parameters.AddWithValue("@RoleId", userModel.RoleId);
                     command.Parameters.AddWithValue("@Email", userModel.Email);
                     command.Parameters.AddWithValue("@Password", password);

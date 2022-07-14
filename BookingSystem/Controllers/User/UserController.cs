@@ -23,10 +23,15 @@ namespace BookingSystem.Controllers.User
         {
             string token = Convert.ToString(Request.Headers.Authorization);
 
-                if (ModelState.IsValid && AuthManager.VerifyToken(token) && AuthManager.VerifyRole(token))
+            if (AuthManager.VerifyToken(token) && AuthManager.VerifyRole(token))
+            {
+                if (ModelState.IsValid)
                 {
                     return userDAO.InsertOne(body);
                 }
+                
+                else return "The data sent are missing some field/s.";
+            }
 
             Debug.WriteLine("Unauthorized");
             return Request.CreateResponse(HttpStatusCode.Unauthorized);
@@ -68,13 +73,15 @@ namespace BookingSystem.Controllers.User
         public dynamic UpdateUser([FromBody] UserModel body)
         {
             string token = Convert.ToString(Request.Headers.Authorization);
-
+            Debug.WriteLine(token);
             if (AuthManager.VerifyToken(token))
             {
                 if (ModelState.IsValid)
                 {
                     return userDAO.UpdateOne(body);
                 }
+
+                else return "The data sent are missing some field/s.";
             }
 
             Debug.WriteLine("Unauthorized");
