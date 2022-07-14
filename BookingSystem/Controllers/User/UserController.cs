@@ -73,7 +73,6 @@ namespace BookingSystem.Controllers.User
         public dynamic UpdateUser([FromBody] UserModel body)
         {
             string token = Convert.ToString(Request.Headers.Authorization);
-            Debug.WriteLine(token);
             if (AuthManager.VerifyToken(token))
             {
                 if (ModelState.IsValid)
